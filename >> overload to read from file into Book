@@ -1,6 +1,5 @@
 ifstream& operator>>(ifstream &inputStream, Book* b)
 {
-    cout << "Running this function" << endl;
     string buff = "";
     char *buffArr;
     int buffNum = 0;
