@@ -1,25 +1,22 @@
-//
-//  Inventory.h
-//  CIS22B_FinalProject
-//
-//  Created by Matan Broner on 6/5/18.
-//  Copyright © 2018 Matan Broner. All rights reserved.
-//
 
 #ifndef Inventory_h
 #define Inventory_h
 #include "Book.h"
 #include <fstream>
+#include <string>
+#include <stdlib.h>
 
+ifstream& operator>>(ifstream&, Book*);
 
 class Book;
 class Inventory
 {
 private:
-    Book *books[];
     const static int booksPossible = 100;
+    Book* books[booksPossible];
+    int bookCount = 0;
 public:
-    Inventory(ifstream);
+    Inventory(ifstream&);
     void getUserInput();
     int proccessUserInput();
     bool isInStock();
@@ -29,7 +26,11 @@ public:
     void editBook(string);
     Book getBookInfo(string);
     void sortInventory();
+    
+    int findBookIndex(string);
+    
+    friend ifstream& operator>>(ifstream&, Book*);
+    
+    ~Inventory();
 };
 
-
-#endif /* Inventory_h */
