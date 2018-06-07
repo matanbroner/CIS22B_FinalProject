@@ -1,5 +1,5 @@
 000001	Title1	Author1	Publisher1	20180101	1	10.00	12.00
-000002	Title2	Author11	Publisher1	20180101	2	10.00	12.00
+000002	Title2	Author1 Publisher1	20180101	2	10.00	12.00
 000003	Title3	Author1	Publisher1	20180103	1	10.00	12.00
 000004	Title4	Author2	Publisher1	20180101	1	10.00	12.00
 000005	Title5	Author1	Publisher1	20180103	4	10.00	12.00
