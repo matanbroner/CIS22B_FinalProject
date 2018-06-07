@@ -1,0 +1,41 @@
+ifstream& operator>>(ifstream &inputStream, Book* b)
+{
+    string buff = "";
+    int *buffArr;
+    int buffNum = 0;
+    double buffDouble = 0;
+    buffArr = new int[10];
+    for (int i = 0; i < 10; i ++){
+        inputStream >> buffArr[i];
+        cout << buffArr[i];
+    }
+    b->setISBN(buffArr);
+    delete buffArr;
+    getline(inputStream, buff, '\t');
+    cout << buff;
+    b->setTitle(buff);
+    getline(inputStream, buff, '\t');
+    cout << buff;
+    b->setAuthor(buff);
+    getline(inputStream, buff, '\t');
+    cout << buff;
+    b->setPub(buff);
+    buffArr = new int[8];
+    for (int i = 0; i < 8; i++){
+        inputStream >> buffArr[i];
+        cout << buffArr[i];
+    }
+    b->setDate(buffArr);
+    delete buffArr;
+    inputStream >> buffNum;
+    cout << buffNum;
+    b->setStock(buffNum);
+    inputStream >> buffDouble;
+    cout << buffDouble;
+    b->setRT(buffDouble);
+    inputStream >> buffDouble;
+    cout << buffDouble;
+    b->setWS(buffDouble);
+    
+    return inputStream;
+}
