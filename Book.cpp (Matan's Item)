@@ -1,1 +1,99 @@
 
+//
+//  Book.cpp
+//  CIS22B_FinalProject
+//
+//  Created by Matan Broner on 6/6/18.
+//  Copyright © 2018 Matan Broner. All rights reserved.
+//
+
+#include <stdio.h>
+#include "Book.h"
+
+Book::Book()
+{
+}
+
+void Book::setISBN(string x)
+{
+    ISBN = x;
+}
+
+void Book::setTitle(string title)
+{
+    this->title = title;
+}
+
+void Book::setAuthor(string author)
+{
+    this->author = author;
+}
+
+void Book::setPub(string publisher)
+{
+    this->publisher = publisher;
+}
+
+void Book::setDate(string x)
+{
+    date = x;
+}
+
+void Book::setStock(int stock)
+{
+    this->stock = stock;
+}
+
+void Book::setRT(double retail)
+{
+    this->retail = retail;
+}
+
+void Book::setWS(double wholesale)
+{
+    this->wholesale = wholesale;
+}
+
+bool Book::verifyISBN()
+{
+    int index  = 0;
+    bool valid = true;
+    while (valid == true && index < 6)
+    {
+        if (isdigit(ISBN[index]) ==  false)
+            valid = false;
+        index++;
+    }
+    if (valid == false)
+    {
+        cout << "ISBN contains non-numeric digits!" << endl;
+        return false;
+    }
+    else return true;
+}
+
+string Book::getTitle(){return title;}
+string Book::getAuthor(){return author;}
+string Book::getPub(){return publisher;}
+int Book::getStock(){return stock;}
+string Book::getISBN(){return ISBN;}
+string Book::getDate(){return date;}
+double Book::getRetail(){return retail;}
+double Book::getWholesale(){return wholesale;}
+
+
+const Book Book::operator=(const Book &right)
+{
+    for (int i = 0; i < 10; i++)
+        ISBN[i] = right.ISBN[i];
+    for (int i = 0; i < 8; i++)
+        date[i] = right.date[i];
+    title = right.title;
+    author = right.author;
+    publisher = right.publisher;
+    stock = right.stock;
+    retail = right.retail;
+    wholesale = right.wholesale;
+    
+    return *this;
+}
