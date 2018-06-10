@@ -1,1 +1,57 @@
 
+//
+//  Book.h
+//  CIS22B_FinalProject
+//
+//  Created by Matan Broner on 6/6/18.
+//  Copyright © 2018 Matan Broner. All rights reserved.
+//
+
+#ifndef Book_h
+#define Book_h
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+class Book
+{
+private:
+    string ISBN;
+    string title;
+    string author;
+    string publisher;
+    string date;
+    int stock;
+    double wholesale;
+    double retail;
+    
+public:
+    Book();
+    Book(char[10], string, string, string, char[8], int, double, double);
+    
+    void setISBN(string);
+    void setTitle(string);
+    void setAuthor(string);
+    void setPub(string);
+    void setDate(string);
+    void setStock(int);
+    void setWS(double);
+    void setRT(double);
+    
+    
+    string getISBN();
+    string getTitle();
+    string getAuthor();
+    string getPub();
+    string getDate();
+    int getStock();
+    double getWholesale();
+    double getRetail();
+    
+    bool verifyISBN();
+    
+    const Book operator=(const Book&);
+};
+
+#endif /* Book_h */
