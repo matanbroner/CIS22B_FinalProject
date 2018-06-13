@@ -4,34 +4,35 @@
 
 #include "Book.h"
 #include "Inventory.h"
+#include "Cart.h"
+#include "Item.h"
 
 class Cashier
 {
 private:
-  int quantity;
-  double tax;
-  double subTotal;
-  double total;
+	int quantity;
+	const static int count = 0; // is this right? to keep track of items in cart
+	double tax;
+	double total;
+	Book* books[count];
+	Item items;
+	Inventory inventory;
+	Cart shoppingCart;
 public:
-  //constructor here
-  //Cashier();
-  void setQuantity(int);
-  void setTax(double);
-  void setSubTotal(double);
-  void setTotal():
-  int getQuantity();
-  double getTax();
-  double getSubTotal();
-  double getTotal();
+	//constructor here
+	Cashier();
+	void interact(Inventory);
+	void setQuantity(int);
+	void setTax(double);
+	void setTotal();
+	void deleteFromInv(Inventory);
 
-  void interact();
-  void printReceipt();
+	int getQuantity();
+	double getTax();
+	double getTotal();
 
-  //will work on these Fri night/Saturday
-  //void checkout();
-  //void addToCart();
-
+	void checkout();
+	void printReceipt();
 };
-
 
 #endif
