@@ -10,7 +10,6 @@
 Inventory::Inventory(string filename)
 {
     this->filename = filename;
-    cout << filename << endl;
     ifstream inputFile;
     inputFile.open(filename.c_str()); // pre-v.11 c++ requires c-string file name
     
