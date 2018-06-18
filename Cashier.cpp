@@ -27,21 +27,16 @@ Cashier::Cashier(Inventory *inventory)
 	}
 }
 
-Cashier::Cashier(int quantity, double tax, double total)
-{
-	this->quantity = quantity;
-	this->tax = tax;
-	this->total = total;
-}
+//Cashier::Cashier(int quantity, double tax, double total)
+//{
+//	this->quantity = quantity;
+//	this->tax = tax;
+//	this->total = total;
+//}
 
-//user can add books to shopping cart then check out
+//prompt user to select an option, pass to internal menu
 void Cashier::displayTopMenu()
 {
-	string title; // for testing
-
-				  //read booklist from file
-				  //create instance of shopping cart object
-
 	int choice = -1;
 	std::cout << "Please select an option below ..." << std::endl;
 	std::cout << "[1] Add books to your shopping cart" << std::endl;
@@ -61,7 +56,8 @@ void Cashier::displayTopMenu()
 }
 void Cashier::displayInternalMenu(int choice)
 {
-	string title; //for testing
+	//Book *currentBook = nullptr;
+	string title = book.getTitle();
 	cin.ignore();
 	switch (choice)
 	{
@@ -70,6 +66,8 @@ void Cashier::displayInternalMenu(int choice)
 		getline(cin, title);
 		std::cout << "Enter the quantity of " << title << " you'd like to add: ";
 		std::cin >> quantity;
+		//shoppingCart.addToCart(currentBook);
+		//shoppingCart.getCartValue();
 		displayTopMenu();
 		break;
 	case 2:
@@ -77,10 +75,12 @@ void Cashier::displayInternalMenu(int choice)
 		std::cin >> title;
 		std::cout << "Enter the quantity of " << title << " you'd like to remove: ";
 		std::cin >> quantity;
+		//shoppingCart.removeFromCart(currentBook);
 		displayTopMenu();
 		break;
 	case 3:
 		std::cout << "Here is your shopping cart ..." << std::endl;
+		//viewCart(shoppingCart);
 		displayTopMenu();
 		break;
 	case 4:
@@ -93,6 +93,7 @@ void Cashier::displayInternalMenu(int choice)
 		std::cout << "Select a valid choice ... " << std::endl;
 		displayTopMenu();
 	}
+	//delete currentBook;
 }
 void Cashier::setQuantity(int quantity)
 {
@@ -108,9 +109,9 @@ void Cashier::setTotal(Cart cart)
 	double total = cart.getCartValue() + tax;
 	//get retail price of each book with tax, add all books cost
 }
-void Cashier::deleteFromInv(Book b)
+void Cashier::deleteFromInv()
 {
-	string title = b.getTitle();
+	string title = book.getTitle();
 	inventory->deleteBook(title);
 }
 void Cashier::viewCart(Cart cart)
@@ -120,10 +121,10 @@ void Cashier::viewCart(Cart cart)
 void Cashier::checkout()
 {
 	//use the getBookInfo from inventory to find the books we're grabbing
-	//inventory.getBookInfo();
+	inventory->getBookInfo(book.getTitle());
 
 	//remove whatever books they purchase from inventory
-	deleteFromInv(book);
+	deleteFromInv();
 	printReceipt();
 }
 int Cashier::getQuantity() { return quantity; }
@@ -135,8 +136,8 @@ void Cashier::printReceipt()
 	//once the other stuff is corrected fully this shouldn't be hard to update..
 	std::cout << setw(46) << "Copy of receipt" << std::endl << std::endl;
 
-	std::cout << setw(20) << "Book 1" << setw(40) << /*book.getRetail()*/ "10.99" << std::endl;
-	std::cout << setw(20) << "Book 2" << setw(40) << /*book.getRetail()*/ "9.99" << std::endl << std::endl;
+	std::cout << setw(29) << "Book title here" << setw(31) << /*book.getRetail()*/ "10.99" << std::endl;
+	std::cout << setw(29) << "Book title here" << setw(31) << /*book.getRetail()*/ "9.99" << std::endl << std::endl;
 	std::cout << setw(22) << "Subtotal" << setw(38) << /*shoppingCart.getCartValue()*/ "20.98" << endl;
 	std::cout << std::endl;
 	std::cout << setw(17) << "Tax" << setw(43) << /*getTax() */ "5.00" << std::endl << std::endl;
