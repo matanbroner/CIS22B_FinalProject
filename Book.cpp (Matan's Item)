@@ -54,13 +54,13 @@ void Book::setWS(double wholesale)
     this->wholesale = wholesale;
 }
 
-bool Book::verifyISBN()
+bool Book::verifyISBN(string x)
 {
     int index  = 0;
     bool valid = true;
     while (valid == true && index < 6)
     {
-        if (isdigit(ISBN[index]) ==  false)
+        if (isdigit(x[index]) ==  false)
             valid = false;
         index++;
     }
@@ -71,6 +71,22 @@ bool Book::verifyISBN()
     }
     else return true;
 }
+
+void Book::correctPrices()
+{
+    if (this->retail < 0)
+    {
+        cout << "Retail price for " << this->getTitle() << " is negative, setting absolute value" << endl;
+        this->retail *= -1;
+    }
+    if (this->wholesale < 0)
+    {
+        cout << "Wholesale price for " << this->getTitle() << " is negative, setting absolute value" << endl;
+        this->wholesale *= -1;
+    }
+    
+}
+
 
 string Book::getTitle(){return title;}
 string Book::getAuthor(){return author;}
@@ -97,3 +113,8 @@ const Book Book::operator=(const Book &right)
     
     return *this;
 }
+
+Book::~Book()
+{
+}
+
