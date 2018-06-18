@@ -75,6 +75,12 @@ void Inventory::displayInternalMenu(int choice)
             cout << "You have " << bookCount << " books in your Inventory" << endl;
             displayTopMenu();
             break;
+        case 6:
+            cout << "Title to edit: ";
+            getline(cin, buff);
+            editBook(buff);
+            displayTopMenu();
+            break;
         case 0:
             cout << "Returning to main menu..." << endl;
             break;
@@ -92,12 +98,13 @@ void Inventory::displayTopMenu()
     cout << "[3] -- Get info about a book in Inventory" << endl;
     cout << "[4] -- Delete a book from Inventory" << endl;
     cout << "[5] -- Get number of books in Inventory" << endl;
+    cout << "[6] -- Edit a book's record" << endl;
     cout << endl << endl;
     cout << "[0] -- Return to previous page" << endl << endl;
     cout << "Option: ";
     
     cin >> choice;
-    while (choice < 0 || choice > 5 || cin.fail())
+    while (choice < 0 || choice > 6 || cin.fail())
     {
         cout << "** invalid response **" << endl;
         cin.clear();
@@ -331,6 +338,111 @@ void Inventory::getBookInfo(string title)
     }
 }
 
+void Inventory::editBook(string title)
+{
+    string buff;
+    int choice = 0, numBuff;
+    double doubBuff;
+    int index = findBookIndex(title);
+    if (index != -1)
+    {
+        cout << "1. Edit ISBN" << endl;
+        cout << "2. Edit title" << endl;
+        cout << "3. Edit author" << endl;
+        cout << "4. Edit publisher" << endl;
+        cout << "5. Edit stock" << endl;
+        cout << "6. Edit publish date" << endl;
+        cout << "7. Edit retail price" << endl;
+        cout << "8. Edit wholesale price" << endl << endl;
+        cout << "0. Return to previous menu" << endl;
+        cin >> choice;
+        
+        switch(choice)
+        {
+            case 1:
+                clearBuffer();
+                while(getline(cin,buff) && buff.size() != 6)
+                {
+                    books[index]->verifyISBN(buff);
+                    cout << "Enter valid ISBN!" << endl;
+                }
+                books[index]->setISBN(buff);
+                break;
+            case 2:
+                clearBuffer();
+                cout << "Title: ";
+                getline(cin, buff);
+                books[index]->setTitle(buff);
+                cout << "Title changed!" << endl;
+                sortInventory();
+                break;
+            case 3:
+                clearBuffer();
+                cout << "Author: ";
+                getline(cin, buff);
+                books[index]->setAuthor(buff);
+                cout << "Author changed!" << endl;
+                break;
+            case 4:
+                clearBuffer();
+                cout << "Publisher: ";
+                getline(cin, buff);
+                books[index]->setPub(buff);
+                cout << "Publisher changed!" << endl;
+                break;
+            case 5:
+                clearBuffer();
+                cout << "Stock: ";
+                while(cin >> numBuff && numBuff <= 0)
+                    cout << "Invalid stock!" << endl;
+                books[index]->setStock(numBuff);
+                cout << "Stock changed!" << endl;
+                break;
+            case 6:
+                clearBuffer();
+                cout << "Date Published (YYYYMMDD): ";
+                while(getline(cin,buff) && buff.size() != 8)
+                {
+                    cout << "Enter a valid date!" << endl;
+                }
+                books[index]->setDate(buff);
+                cout << "Date changed!" << endl;
+                break;
+            case 7:
+                clearBuffer();
+                cout << "Retail Price: $";
+                while(cin >> doubBuff && doubBuff < 0.01)
+                    cout << "Invalid price!" << endl;
+                books[index]->setRT(doubBuff);
+                books[index]->correctPrices();
+                cout << "Retail Price changed!" << endl;
+                break;
+            case 8:
+                clearBuffer();
+                cout << "Wholesale Price: $";
+                while(cin >> doubBuff && doubBuff < 0.01)
+                    cout << "Invalid price!" << endl;
+                books[index]->setWS(doubBuff);
+                books[index]->correctPrices();
+                cout << "Wholesale Price changed!" << endl;
+                break;
+            case 0:
+                displayTopMenu();
+                break;
+            default:
+                cout << "invalid choice -- returning to main menu" << endl;
+                displayTopMenu();
+        }
+        
+    }
+    else
+    {
+        cout << "Book not found... returning to main menu" << endl;
+        displayTopMenu();
+    }
+
+}
+
 ifstream& operator>>(ifstream &inputStream, Book* b)
 {
     string buff = "";
@@ -412,3 +524,4 @@ Inventory::~Inventory()
         bookCount--;
     }
 }
+
