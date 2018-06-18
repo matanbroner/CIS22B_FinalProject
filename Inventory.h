@@ -19,7 +19,7 @@ ifstream& operator>>(ifstream&, Book*);
 ostream& operator<<(ostream& ,Book*);
 
 class Book;
-class Inventory
+class Inventory : public Module
 {
 private:
     string filename = "";
