@@ -20,7 +20,6 @@ Inventory::Inventory(string filename)
             inputFile >> books[bookCount];
             bookCount++;
         }
-        bookCount--;
     }
     inputFile.close();
 }
