@@ -111,7 +111,7 @@ void Cashier::setTotal(Cart cart)
 void Cashier::deleteFromInv(Book b)
 {
 	string title = b.getTitle();
-	inventory.deleteBook(title);
+	inventory->deleteBook(title);
 }
 void Cashier::viewCart(Cart cart)
 {
