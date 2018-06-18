@@ -25,13 +25,13 @@ public:
 	void displayInternalMenu(int); //to show next menu for more interactions
 	void setQuantity(int);
 	void setTax(double);
-	void setTotal(Cart);
+	void setTotal();
 	void deleteFromInv();
 	int getQuantity();
 	double getTax();
 	double getTotal();
 
-	void viewCart(Cart);
+	void viewCart();
 	void checkout();
 	void printReceipt();
 };
