@@ -104,9 +104,9 @@ void Cashier::setTax(double tax)
 	this->tax = tax;
 	//this will be a constant?
 }
-void Cashier::setTotal(Cart cart)
+void Cashier::setTotal()
 {
-	double total = cart.getCartValue() + tax;
+	double total = shoppingCart.getCartValue() + tax;
 	//get retail price of each book with tax, add all books cost
 }
 void Cashier::deleteFromInv()
@@ -114,7 +114,7 @@ void Cashier::deleteFromInv()
 	string title = book.getTitle();
 	inventory->deleteBook(title);
 }
-void Cashier::viewCart(Cart cart)
+void Cashier::viewCart()
 {
 	//function to show shopping cart?
 }
