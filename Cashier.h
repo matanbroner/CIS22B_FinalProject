@@ -14,7 +14,7 @@ private:
 	double tax;
 	double total;
 	Book book;
-	Inventory inventory;
+	Inventory *inventory;
 	Cart shoppingCart;
 public:
 	//constructor here
