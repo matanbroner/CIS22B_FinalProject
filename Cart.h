@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
-#include "Item.h"
+#include "Book.h"
 
 class Cart {
 private:
-	Item* shoppingCart; // pointer that will go to an array
+	Book ** shoppingCart; // pointer that will go to an array
 	int cartSize;
 	int uniqueInCart; // number of unique items in cart - for array sizing
 	double cartValue; // total cost of the cart items
@@ -18,8 +18,8 @@ public:
 	~Cart(); // remember to delete items in shoppingCart
 
 
-	void addToCart(Item); // should this take an Item object, or should this just be the UI part of add/removing? 
-	void removeFromCart(Item);
+	void addToCart(Book *); // should this take an Item object, or should this just be the UI part of add/removing? 
+	void removeFromCart(Book *);
 
 	double getCartValue();
 };

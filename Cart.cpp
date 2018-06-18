@@ -2,31 +2,46 @@
 #include "Cart.h"
 
 Cart::Cart() {
-	shoppingCart = new Item[10]; // default size 10?
+	*shoppingCart = new Book[10]; // default size 10?
 }
 
 Cart::Cart(int size) {
-	shoppingCart = new Item[size]; 
+	*shoppingCart = new Book[size];
 	cartSize = size;
 }
 
 Cart::~Cart() {
-	// TO DO: Item delete
+	for (int i = 0; i < cartSize; i++) {
+		if (shoppingCart[i] != nullptr) {
+			delete shoppingCart[i]; //requires Book deleter
+		}
+	}
+
 	delete[] shoppingCart;
 }
 
-void Cart::addToCart(Item book) {
-	
+void Cart::addToCart(Book *book) {
+
 	// check if book is in shoppingCart already
 	// if it is in cart, increment (item + item)
 	// if it isn't, add to the end of the array
 	// if shopping cart is too small, double array size
 
-	// need: comparison, addition operator overload for Items
-	
 
 	// First: Check if the book is in shoppingCart
 	// If yes, increment (item + item)
+	Book *currBook = nullptr;
+	for (int i = 0; i < cartSize; i++) {
+		currBook = shoppingCart[i];
+
+		if (*currBook == *book) {
+			(*currBook).setStock((*currBook).getStock() + book->getStock());
+
+			delete book; // purpose served, must delete here
+			book = nullptr;
+			return;
+		}
+	}
 
 	// If no, check cart space
 	if (uniqueInCart == cartSize) {
@@ -37,9 +52,6 @@ void Cart::addToCart(Item book) {
 	shoppingCart[uniqueInCart] = book;
 	uniqueInCart++;
 
-
-
-
 	// UI, TO BE WRITTEN SOMEWHERE ELSE:
 	// display list of Items in Inventory by index + 1
 	// user inputs number to be added
@@ -47,12 +59,36 @@ void Cart::addToCart(Item book) {
 
 }
 
-void Cart::removeFromCart(Item book) {
+void Cart::removeFromCart(Book *book) {
 	// check if book is in shoppingCart already
 	// if it is in cart, decrement (item - item)
 	// if it isn't, do nothing? Exception?
 
+	Book *currBook = nullptr;
+	for (int i = 0; i < uniqueInCart; i++) {
+		currBook = shoppingCart[i];
 
+		if (*currBook == *book) {
+			currBook->setStock(currBook->getStock() - book->getStock());
+			if (currBook->getStock() <= 0) {
+				delete currBook;
+				shoppingCart[i] = nullptr;
+
+				// shifts pointers in cart over
+				for (int k = i; k < uniqueInCart - 1; k++) {
+					shoppingCart[k] = shoppingCart[k + 1];
+					shoppingCart[k + 1] = nullptr;
+				}
+				uniqueInCart--;
+			}
+
+			delete book;
+			book = nullptr;
+			return;
+		}
+	}
+
+	throw "Book not in cart";
 
 	// UI, TO BE WRITTEN SOMEWHERE ELSE:
 	// display list of Items in shoppingCart by index + 1
@@ -67,28 +103,22 @@ double Cart::getCartValue() {
 }
 
 
-// rather than scan the entire Item array, use this to update value as items are added
+// rather than scan the entire Book array, use this to update value as items are added
 void Cart::calcCartVal(double price, int quantity) {
 	cartValue += (price * quantity);
 }
 
 void Cart::increaseCartSize() {
-	Item* biggerCart = new Item[cartSize * 2];
+	Book** biggerCart;
+	*biggerCart = new Book[cartSize * 2];
 
-	// copy over things from shoppingCart
+	// copy pointers from shoppingCart, set shoppingCart pointers to nullptr so when delete Cart is called the books arent deleted
 	for (int i = 0; i < cartSize; i++) {
-		biggerCart[i] = shoppingCart[i]; // TODO: Item copy constructor
+		biggerCart[i] = shoppingCart[i];
+		shoppingCart[i] = nullptr;
 	}
 
 	delete[] shoppingCart;
 	shoppingCart = biggerCart; // shoppingCart now points to the bigger array
 	cartSize *= 2; // update size
-
-	// Thoughts:
-	// issue: increaseCartSize will be slow because it reconstructs all the Items
-	// possible solution: shoppingCart holds pointers to Items 
-	// no - because then deleting the shoppingCart won't delete the Items, which we ultimately want
-	// in order to delete all Items at the very end of the program
-
-	// solution: leave it as is. Use copy constructor for Item
 }
