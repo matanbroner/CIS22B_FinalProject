@@ -513,6 +513,11 @@ void Inventory::clearBuffer()
     cin.ignore(256,'\n');
 }
 
+int Inventory::getBookCount()
+{
+    return this->bookCount;
+}
+
 Inventory::~Inventory()
 {
     cout << "Saving your inventory file..." << endl;
