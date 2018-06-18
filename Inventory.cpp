@@ -15,21 +15,13 @@ Inventory::Inventory(string filename)
     inputFile.open(filename.c_str()); // pre-v.11 c++ requires c-string file name
     
     if (inputFile){
-    while(bookCount < booksPossible && !inputFile.eof())
-    {
-        books[bookCount] = new Book;
-        inputFile >> books[bookCount];
-        bookCount++;
-    }
-    // eof reads one extra time after end of file is reached
+        while(bookCount < booksPossible && !inputFile.eof())
+        {
+            books[bookCount] = new Book;
+            inputFile >> books[bookCount];
+            bookCount++;
+        }
         bookCount--;
-        sortInventory();
-        
-        cout << "You have " << bookCount << " books" << endl;
-        
-        //addBook();
-        cout << "You have " << bookCount << " books" << endl;
-        viewInventory();
     }
     inputFile.close();
 }
@@ -42,8 +34,6 @@ int Inventory::findBookIndex(string search)
     for (int i = 0; i < bookCount; i++)
         if (books[i]->getTitle() == search)
             pos = i;
-    if (pos == -1)
-        cout << "Not Found!" << endl;
     return pos;
 }
 
@@ -55,23 +45,66 @@ bool Inventory::isInStock(string search)
     else return false;
 }
 
-void Inventory::displayInternalMenu()
+void Inventory::displayInternalMenu(int choice)
 {
-        cout << "Inventory Manipulation Menu" << endl;
-        cout << "1. View Inventory" << endl;
-        cout << "2. Manipulate Book Info" << endl;
-        cout << "3. Add Book" << endl;
-        cout << "4. Delete Book" << endl;
-    
-        //processUserInput(getUserInput());
+    clearBuffer();
+    string buff = "";
+  switch (choice)
+    {
+        case 1:
+            viewInventory();
+            displayTopMenu();
+            break;
+        case 2:
+            addBook();
+            displayTopMenu();
+            break;
+        case 3:
+            cout << "Title for info: ";
+            getline(cin, buff);
+            getBookInfo(buff);
+            displayTopMenu();
+            break;
+        case 4:
+            cout << "Title for deletion: ";
+            cin >> buff;
+            deleteBook(buff);
+            displayTopMenu();
+            break;
+        case 5:
+            cout << "You have " << bookCount << " books in your Inventory" << endl;
+            displayTopMenu();
+            break;
+        case 0:
+            cout << "Returning to main menu..." << endl;
+            break;
+        default:
+            cout << "Something went wrong... " << endl;
+    }
 }
 
-int Inventory::getUserInput()
+void Inventory::displayTopMenu()
 {
-    int UI = 0;
-    cin >> UI;
+    int choice = -1;
+    cout << endl << setw(20) << "-- Inventory --" << endl << endl;
+    cout << "[1] -- View a page in Inventory" << endl;
+    cout << "[2] -- Add a book to Inventory" << endl;
+    cout << "[3] -- Get info about a book in Inventory" << endl;
+    cout << "[4] -- Delete a book from Inventory" << endl;
+    cout << "[5] -- Get number of books in Inventory" << endl;
+    cout << endl << endl;
+    cout << "[0] -- Return to previous page" << endl << endl;
+    cout << "Option: ";
     
-    return UI;
+    cin >> choice;
+    while (choice < 0 || choice > 5 || cin.fail())
+    {
+        cout << "** invalid response **" << endl;
+        cin.clear();
+        cin.ignore(256,'\n');
+        cin >> choice;
+    }
+    displayInternalMenu(choice);
 }
 
 void Inventory::sortInventory()
@@ -90,7 +123,7 @@ void Inventory::sortInventory()
                 minValue = books[index];
                 minIndex = index;
             }
-       }
+        }
         books[minIndex] = books[startPos];
         books[startPos] = minValue;
     }
@@ -98,11 +131,23 @@ void Inventory::sortInventory()
 
 void Inventory::deleteBook(string title)
 {
+    try{
     int pos = findBookIndex(title);
+    if (pos == -1)
+        throw -1;
+    else{
     for (int i = pos; i < bookCount; i++)
         books[i] = books[i+1];
     books[bookCount] = nullptr;
     bookCount--;
+    cout << "Book has been deleted!" << endl;
+    sortInventory();
+    }
+    }
+    catch(...)
+    {
+        cout << "Book not in inventory..." << endl;
+    }
 }
 
 void Inventory::viewInventory()
@@ -116,17 +161,17 @@ void Inventory::viewInventory()
     cout << "View Page: ";
     cin >> pages;
     
-    cout << setw(30) << "Page " << pages << endl;
-    cout << "----------------------------------------------------------------" << endl;
-    cout << left <<setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(5) << "Stock" << endl;
-    cout << "----------------------------------------------------------------" << endl;
+    cout << "Page " << pages << endl;
+    cout << "---------------------------------------------------------------------" << endl;
+    cout << left << setw(27) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(15) << "Stock" << endl;
+    cout << "---------------------------------------------------------------------" << endl;
     
     if (10 * pages > bookCount) // bookc count is not divisible by 10 and user chose last page
     {
         int diff = bookCount - (10 * (pages-1));
         for (int i = bookCount - diff; i < bookCount; i++)
         {
-            cout << setw(25) << left << books[i]->getTitle() << "   ";
+            cout << left << setw(25) << books[i]->getTitle() << "   ";
             cout << setw(15) << books[i]->getAuthor() << "   ";
             cout << setw(15) <<  books[i]->getPub() << "   ";
             cout << books[i]->getStock() << endl;
@@ -137,7 +182,7 @@ void Inventory::viewInventory()
     {
         for (int i = 10; i >= 1; i--)
         {
-            cout << setw(25) << left << books[(10 * pages) - i]->getTitle() << "   ";
+            cout << left << setw(25) << books[(10 * pages) - i]->getTitle() << "   ";
             cout << setw(15) << books[(10 * pages) - i]->getAuthor() << "   ";
             cout << setw(15) <<  books[(10 * pages) - i]->getPub() << "   ";
             cout << books[(10 * pages) - i]->getStock() << endl;
@@ -149,28 +194,30 @@ void Inventory::addBook()
 {
     if (bookCount < booksPossible)
     {
-        bookCount++;
         string buff;
         int numBuff;
         double doubBuff;
         books[bookCount] = new Book;
         cout << "ISBN: ";
         while(getline(cin,buff) && buff.size() != 6)
+        {
+            books[bookCount]->verifyISBN(buff);
             cout << "Enter valid ISBN!" << endl;
+            buff = "0";
+        }
         books[bookCount]->setISBN(buff);
-        books[bookCount]->verifyISBN();
-    
+        
         cout << "Title: ";
         getline(cin, buff);
         books[bookCount]->setTitle(buff);
-    
+        
         cout << "Author: ";
         getline(cin, buff);
         books[bookCount]->setAuthor(buff);
-    
+        
         cout << "Publisher: ";
         getline(cin, buff);
-        books[bookCount]->setAuthor(buff);
+        books[bookCount]->setPub(buff);
         
         cout << "Date Published (YYYYMMDD): ";
         while(getline(cin,buff) && buff.size() != 8)
@@ -178,10 +225,11 @@ void Inventory::addBook()
             cout << "Enter a valid date!" << endl;
         }
         books[bookCount]->setDate(buff);
-    
+        
         cout << "Stock: ";
         while(cin >> numBuff && numBuff <= 0)
             cout << "Invalid stock!" << endl;
+        books[bookCount]->setStock(numBuff);
         
         cout << "Retail Price: $";
         while(cin >> doubBuff && doubBuff < 0.01)
@@ -192,8 +240,69 @@ void Inventory::addBook()
         while(cin >> doubBuff && doubBuff < 0.01)
             cout << "Invalid price!" << endl;
         books[bookCount]->setWS(doubBuff);
+        bookCount++;
         
+        clearBuffer();
+    }
+    else cout << "Book capacity reached, cannot add more books currently!" << endl;
+    
+}
+
+void Inventory::addBook(string t)
+{
+    if (bookCount < booksPossible)
+    {
+        string buff;
+        int numBuff;
+        double doubBuff;
+        books[bookCount] = new Book;
+        cout << "ISBN: ";
+        while(getline(cin,buff) && buff.size() != 6)
+        {
+            books[bookCount]->verifyISBN(buff);
+            cout << "Enter valid ISBN!" << endl;
+        }
+        books[bookCount]->setISBN(buff);
+        
+        books[bookCount]->setTitle(t);
+        
+        cout << "Author: ";
         getline(cin, buff);
+        books[bookCount]->setAuthor(buff);
+        
+        cout << "Publisher: ";
+        getline(cin, buff);
+        books[bookCount]->setPub(buff);
+        
+        cout << "Date Published (YYYYMMDD): ";
+        while(getline(cin,buff) && buff.size() != 8)
+        {
+            cout << "Enter a valid date!" << endl;
+        }
+        books[bookCount]->setDate(buff);
+        
+        cout << "Stock: ";
+        while(cin >> numBuff && numBuff <= 0)
+            cout << "Invalid stock!" << endl;
+        books[bookCount]->setStock(numBuff);
+        
+        cout << "Retail Price: $";
+        while(cin >> doubBuff && doubBuff < 0.01)
+            cout << "Invalid price!" << endl;
+        books[bookCount]->setRT(doubBuff);
+        
+        cout << "Wholesale Price: $";
+        while(cin >> doubBuff && doubBuff < 0.01)
+            cout << "Invalid price!" << endl;
+        books[bookCount]->setWS(doubBuff);
+        books[bookCount]->correctPrices();
+        
+        bookCount++;
+        
+        cout << "Your #" << bookCount << " has been added!" << endl;
+        sortInventory();
+        
+        clearBuffer();
     }
     else cout << "Book capacity reached, cannot add more books currently!" << endl;
     
@@ -201,25 +310,35 @@ void Inventory::addBook()
 
 void Inventory::getBookInfo(string title)
 {
+    try
+    {
     int pos = findBookIndex(title);
-    cout << books[pos];
+    if (pos == -1)
+        throw -1;
+    else
+        cout << books[pos];
+    }
+    catch(...)
+    {
+        cout << "Can't find book, would you like to add it to your inventory? (YES/NO)" << endl;
+        string answer = "buff";
+        while (getline(cin,answer) && answer != "YES" && answer != "NO")
+            cout << "**invalid response**" << endl;
+        if (answer == "YES")
+            addBook(title);
+        else cout << "Okay, not adding " << title << " to inventory" << endl;
+        
+    }
 }
 
 ifstream& operator>>(ifstream &inputStream, Book* b)
 {
     string buff = "";
-    char *buffArr;
     int buffNum = 0;
     double buffDouble = 0;
     
-    buffArr = new char[5]; // dynamic array to hold ISBN chars
-    inputStream >> buff; // read ISBN as a string
-    for (int i = 0; i < 6; i++){
-        buffArr[i] = buff[i]; // seperate chars in ISBN
-    }
-    getline(inputStream, buff, '\t'); //clear tab buffer
-    b->setISBN(buffArr);
-    delete buffArr;
+    getline(inputStream, buff, '\t'); // ISBN
+    b->setISBN(buff);
     
     getline(inputStream, buff, '\t'); // title
     b->setTitle(buff);
@@ -230,14 +349,9 @@ ifstream& operator>>(ifstream &inputStream, Book* b)
     getline(inputStream, buff, '\t'); // publisher
     b->setPub(buff);
     
-    buffArr = new char[8]; // dynamic array to hold date chars
-    inputStream >> buff;
-    for (int i = 0; i < 8; i++){
-        buffArr[i] = buff[i];
-    }
+    
     getline(inputStream, buff, '\t'); // clear tab buffer
-    b->setDate(buffArr);
-    delete buffArr;
+    b->setDate(buff);
     
     inputStream >> buffNum; // stock
     b->setStock(buffNum);
@@ -247,8 +361,24 @@ ifstream& operator>>(ifstream &inputStream, Book* b)
     
     inputStream >> buffDouble; // wholesale price
     b->setWS(buffDouble);
-
+    
     return inputStream;
+}
+
+void Inventory::printToFile()
+{
+    ofstream outputFile;
+    outputFile.open(filename);
+    for (int i = 0; i < bookCount; i++)
+    {
+        outputFile << books[i]->getISBN() << '\t';
+        outputFile << books[i]->getTitle() << '\t';
+        outputFile << books[i]->getPub() << '\t';
+        outputFile << books[i]->getDate() << '\t';
+        outputFile << books[i]->getStock() << '\t';
+        outputFile << books[i]->getRetail() << '\t';
+        outputFile << books[i]->getWholesale() << '\n';
+    }
 }
 
 ostream& operator<<(ostream& strm, Book* x)
@@ -264,8 +394,18 @@ ostream& operator<<(ostream& strm, Book* x)
     
     return strm;
 }
+
+void Inventory::clearBuffer()
+{
+    cin.clear();
+    cin.ignore(256,'\n');
+}
+
 Inventory::~Inventory()
 {
+    cout << "Saving your inventory file..." << endl;
+    printToFile();
+    bookCount--; // Move availible book index down by 1
     while (bookCount >= 0)
     {
         delete books[bookCount];
