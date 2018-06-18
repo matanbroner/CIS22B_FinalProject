@@ -40,6 +40,7 @@ public:
     void viewInventory();
     void displayInternalMenu(int);
     int getBookCount();
+    Book* getBookfromIndex(int);
     
     int findBookIndex(string);
     
