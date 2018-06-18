@@ -1,11 +1,11 @@
+#pragma once
 // Cashier.h
-#ifndef CASHIER_H
-#define CASHIER_H
+#ifndef Cashier_h
+#define Cashier_h
 
 #include "Book.h"
 #include "Inventory.h"
 #include "Cart.h"
-//#include "Item.h"
 
 class Cashier
 {
@@ -18,11 +18,11 @@ private:
 	Cart shoppingCart;
 public:
 	//constructor here
-	Cashier();
+	Cashier(Inventory *);
 	Cashier(int, double, double);
 
-	void displayTopMenu(Inventory); //to show first menu
-	void displayInternalMenu(); //to show next menu for more interactions
+	void displayTopMenu(); //to show first menu
+	void displayInternalMenu(int); //to show next menu for more interactions
 	void setQuantity(int);
 	void setTax(double);
 	void setTotal(Cart);
@@ -36,4 +36,4 @@ public:
 	void printReceipt();
 };
 
-#endif
+#endif //Cashier_h
