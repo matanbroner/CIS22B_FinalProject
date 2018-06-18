@@ -21,32 +21,32 @@ class Book;
 class Inventory
 {
 private:
-    string filename;
+    string filename = "";
     const static int booksPossible = 100;
     Book* books[booksPossible];
     int bookCount = 0;
 public:
     Inventory(string);
-    int getUserInput();
-    int proccessUserInput();
+    void displayTopMenu();
     bool isInStock(string);
-    void printToFile(ofstream);
+    void printToFile();
     void addBook();
+    void addBook(string);
     void deleteBook(string);
     void editBook(string);
     void getBookInfo(string);
     void sortInventory();
     void viewInventory();
-    void displayInternalMenu();
+    void displayInternalMenu(int);
     
     int findBookIndex(string);
     
     friend ifstream& operator>>(ifstream&, Book*);
     friend ostream& operator<<(ostream& ,Book*);
+    void clearBuffer();
     
     ~Inventory();
 };
 
 
 #endif /* Inventory_h */
-
