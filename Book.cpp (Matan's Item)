@@ -114,6 +114,11 @@ const Book Book::operator=(const Book &right)
     return *this;
 }
 
+void Book::operator--(int)
+{
+    this->stock -= 1;
+}
+
 Book::~Book()
 {
 }
