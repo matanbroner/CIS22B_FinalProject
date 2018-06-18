@@ -505,6 +505,12 @@ ostream& operator<<(ostream& strm, Book* x)
     return strm;
 }
 
+Book* Inventory::getBookByIndex(int index)
+{
+    return books[index];
+}
+
+
 void Inventory::clearBuffer()
 {
     cin.clear();
