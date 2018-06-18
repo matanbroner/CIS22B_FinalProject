@@ -12,7 +12,10 @@
 #include <string>
 #include <iostream>
 
+
 using namespace std;
+
+struct price;
 
 class Book
 {
@@ -49,9 +52,15 @@ public:
     double getWholesale();
     double getRetail();
     
-    bool verifyISBN();
+    bool verifyISBN(string);
+    void correctPrices();
     
     const Book operator=(const Book&);
+    
+    ~Book();
 };
 
+
+
 #endif /* Book_h */
+
