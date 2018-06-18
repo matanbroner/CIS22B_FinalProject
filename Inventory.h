@@ -9,6 +9,7 @@
 #ifndef Inventory_h
 #define Inventory_h
 #include "Book.h"
+#include "Module.h"
 #include <iomanip>
 #include <fstream>
 #include <string>
