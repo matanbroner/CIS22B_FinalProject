@@ -5,32 +5,33 @@
 #include "Book.h"
 #include "Inventory.h"
 #include "Cart.h"
-#include "Item.h"
+//#include "Item.h"
 
 class Cashier
 {
 private:
 	int quantity;
-	const static int count = 0; // is this right? to keep track of items in cart
 	double tax;
 	double total;
-	Book* books[count];
-	Item items;
+	Book book;
 	Inventory inventory;
 	Cart shoppingCart;
 public:
 	//constructor here
 	Cashier();
-	void interact(Inventory);
+	Cashier(int, double, double);
+
+	void displayTopMenu(Inventory); //to show first menu
+	void displayInternalMenu(); //to show next menu for more interactions
 	void setQuantity(int);
 	void setTax(double);
-	void setTotal();
-	void deleteFromInv(Inventory);
-
+	void setTotal(Cart);
+	void deleteFromInv(Book);
 	int getQuantity();
 	double getTax();
 	double getTotal();
 
+	void viewCart(Cart);
 	void checkout();
 	void printReceipt();
 };
