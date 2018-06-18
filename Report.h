@@ -5,8 +5,8 @@ Template sort has been tested. (took me a while to figure out how to make it wor
 
 Module needs:
 friend with inventory books* and friend or public access to Inventory::bookCount
-user output displays
-some menu work
+
+potentially some menu work
 */
 
 /*
@@ -19,6 +19,8 @@ Class Report to display to user user specified total and or user specified type 
 
 // Item is book?
 //#include "Item.h"
+#ifndef REPORT_H
+#define REPORT_H
 #include "Inventory.h"	// has book.h
 #include "Module.h"
 
@@ -42,21 +44,17 @@ public:
 	void moduleMenu();
 
 	template<typename TYPE>
-	void sort(TYPE**/*, Book**/);	// 
-// Book* isin: invptr->books[]		// template could sort an array of pointers along side books
-										// --since the books still need to be sorted but the types are different
-					 				// Age: int *ageptr[Inventory::booksPossible]
-									// ageArr[i] = invptr->books[i].getAge();
+	void sort(TYPE**);
 									// need to put friend class Report in private of Inventory to allow this template sort
 									// this would allow: (access too books array)
 									// invptr->books[low] = invptr->books[counter];
 
-
 	void reportList();				// output inventory list as is (to be called after a sort)
-//	can call invptr->viewInventory() for default
-//	or create a viewFullInventory() in inventory with all stats for default?
+	void reportAge();				// Inventory::viewInventory with Age
+	void reportWholesale();			// Inventory::viewInventory with WholeSale
+
 	void reportRetailValue();		// reportlist() modified with int totalRetailValue();
-	void reportWholeSaleValue();	// reportlist() modified with int totalWholesaleValue();
+	void reportWholeSaleValue();	// reportWholesale() modified with int totalWholesaleValue();
 
 	void sortByAge();				// char[8]
 	// void sortByAuthor();			// string
@@ -64,10 +62,12 @@ public:
 	void sortByRetailValue();		// double
 	void sortByWholesaleValue();	// double
 
-	// int totalQuantity();			// int
+	// int totalQuantity();			// int ( inventory::bookCount )
 	double totalRetailValue();		// double
 	double totalWholesaleValue();	// double
 };
+
+#endif
 
 /*
 char[10],	string,	string,	string,		char[8],	int,		double,	double

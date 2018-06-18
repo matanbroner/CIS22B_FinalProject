@@ -12,7 +12,6 @@ Report::Report(Inventory& object)
 	invptr = &object;
 }
 
-
 Report::~Report()
 {
 }
@@ -62,14 +61,15 @@ void Report::processUserInput(int input)
 		break;
 	case 4:
 		sortByQuantity();		// List by Quantity
+		reportList();
 		break;
 	case 5:
 		sortByWholesaleValue();	// List by Cost
-		reportList();
+		reportWholesale();
 		break;
 	case 6:
 		sortByAge();			// List by Age	
-		reportList();
+		reportAge();
 		break;
 	}
 }
@@ -85,7 +85,7 @@ void Report::moduleMenu()
 			<< "[3] Inventory Retail Value\n"
 			<< "[4] List by Quantity\n"
 			<< "[5] List by Cost\n"
-			<< "[6] List by Age	\n"
+			<< "[6] List by Age\n"
 			<< "[0] Exit Menu\n"
 			<< "[?] ";
 		input = getUserInput();
@@ -96,7 +96,7 @@ void Report::moduleMenu()
 }
 
 template<typename TYPE>
-void sort(TYPE **arr/*, Book *books*/)
+void Report::sort(TYPE **arr)
 {
 	int i, j, low;
 	for (i = 0; i < 5; i++) {
@@ -114,22 +114,148 @@ void sort(TYPE **arr/*, Book *books*/)
 	}
 }
 
-void Report::reportList()
+void Report::reportList() // quantity
 {
 	// inventory output
+	invptr->viewInventory();
 }
 
-void Report::reportRetailValue()
+void Report::reportAge()
+{
+	int pages = 0;
+	if (Inventory::bookCount % 10 == 0) // book count is divisible by 10
+		pages = Inventory::bookCount / 10;
+	else pages = (Inventory::bookCount / 10) + 1; // add extra page for remainder
+
+	cout << "There are " << pages << " in your Inventory." << std::endl;
+	cout << "View Page: ";
+	cin >> pages;
+
+	cout << setw(30) << "Page " << pages << std::endl;
+	cout << "----------------------------------------------------------------" << std::endl;
+	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(5) << "Date Added" << setw(5) << "Stock" << std::endl;
+	cout << "----------------------------------------------------------------" << std::endl;
+
+	if (10 * pages > Inventory::bookCount) // bookc count is not divisible by 10 and user chose last page
+	{
+		int diff = Inventory::bookCount - (10 * (pages - 1));
+		for (int i = Inventory::bookCount - diff; i < Inventory::bookCount; i++)
+		{
+			cout << setw(25) << left << invptr->books[i]->getTitle() << "   ";
+			cout << setw(15) << invptr->books[i]->getAuthor() << "   ";
+			cout << setw(15) << invptr->books[i]->getPub() << "   ";
+			cout << setw(15) << invptr->books[i]->getDateAdded() << "   ";
+			cout << invptr->books[i]->getStock() << std::endl;
+		}
+	}
+
+	else // normal page display if user chose any page before last
+	{
+		for (int i = 10; i >= 1; i--)
+		{
+			cout << setw(25) << left << books[(10 * pages) - i]->getTitle() << "   ";
+			cout << setw(15) << books[(10 * pages) - i]->getAuthor() << "   ";
+			cout << setw(15) << books[(10 * pages) - i]->getPub() << "   ";
+			cout << books[(10 * pages) - i]->getStock() << std::endl;
+		}
+	}
+}
+
+void Report::reportWholesale()
+{
+	// inventory output
+	int pages = 0;
+	if (Inventory::bookCount % 10 == 0) // book count is divisible by 10
+		pages = Inventory::bookCount / 10;
+	else pages = (Inventory::bookCount / 10) + 1; // add extra page for remainder
+
+	cout << "There are " << pages << " in your Inventory." << std::endl;
+	cout << "View Page: ";
+	cin >> pages;
+
+	std::cout << "The total Wholesale Value of the inventory is: " << total << ".\n";
+
+	cout << setw(30) << "Page " << pages << std::endl;
+	cout << "----------------------------------------------------------------" << std::endl;
+	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(5) << "Cost" << setw(5) << "Stock" << std::endl;
+	cout << "----------------------------------------------------------------" << std::endl;
+
+	if (10 * pages > Inventory::bookCount) // bookc count is not divisible by 10 and user chose last page
+	{
+		int diff = Inventory::bookCount - (10 * (pages - 1));
+		for (int i = Inventory::bookCount - diff; i < Inventory::bookCount; i++)
+		{
+			cout << setw(25) << left << invptr->books[i]->getTitle() << "   ";
+			cout << setw(15) << invptr->books[i]->getAuthor() << "   ";
+			cout << setw(15) << invptr->books[i]->getPub() << "   ";
+			cout << setw(15) << invptr->books[i]->getCost() << "   ";
+			cout << invptr->books[i]->getStock() << std::endl;
+		}
+	}
+
+	else // normal page display if user chose any page before last
+	{
+		for (int i = 10; i >= 1; i--)
+		{
+			cout << setw(25) << left << books[(10 * pages) - i]->getTitle() << "   ";
+			cout << setw(15) << books[(10 * pages) - i]->getAuthor() << "   ";
+			cout << setw(15) << books[(10 * pages) - i]->getPub() << "   ";
+			cout << books[(10 * pages) - i]->getStock() << std::endl;
+		}
+	}
+}
+
+void Report::reportRetailValue() // entire retail + retail
 {
 	double total = totalRetailValue();
+
 	// inventory output
+	int pages = 0;
+	if (Inventory::bookCount % 10 == 0) // book count is divisible by 10
+		pages = Inventory::bookCount / 10;
+	else pages = (Inventory::bookCount / 10) + 1; // add extra page for remainder
+
+	cout << "There are " << pages << " in your Inventory." << std::endl;
+	cout << "View Page: ";
+	cin >> pages;
+
+	std::cout << "The total Retail Value of the inventory is: " << total << ".\n";
+
+	cout << setw(30) << "Page " << pages << std::endl;
+	cout << "----------------------------------------------------------------" << std::endl;
+	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(5) << "Price" << setw(5) << "Stock" << std::endl;
+	cout << "----------------------------------------------------------------" << std::endl;
+
+	if (10 * pages > Inventory::bookCount) // bookc count is not divisible by 10 and user chose last page
+	{
+		int diff = Inventory::bookCount - (10 * (pages - 1));
+		for (int i = Inventory::bookCount - diff; i < Inventory::bookCount; i++)
+		{
+			cout << setw(25) << left << invptr->books[i]->getTitle() << "   ";
+			cout << setw(15) << invptr->books[i]->getAuthor() << "   ";
+			cout << setw(15) << invptr->books[i]->getPub() << "   ";
+			cout << setw(15) << invptr->books[i]->getPrice() << "   ";
+			cout << invptr->books[i]->getStock() << std::endl;
+		}
+	}
+
+	else // normal page display if user chose any page before last
+	{
+		for (int i = 10; i >= 1; i--)
+		{
+			cout << setw(25) << left << books[(10 * pages) - i]->getTitle() << "   ";
+			cout << setw(15) << books[(10 * pages) - i]->getAuthor() << "   ";
+			cout << setw(15) << books[(10 * pages) - i]->getPub() << "   ";
+			cout << books[(10 * pages) - i]->getStock() << std::endl;
+		}
+	}
 }
 
-void Report::reportWholeSaleValue()
+void Report::reportWholeSaleValue() // entire wholesale + wholesale
 {
 	double total = totalWholesaleValue();
 	// inventory output
-
+	reportWholesale();
 }
 
 //	age is yyyyymmdd:	20180103	20180130
