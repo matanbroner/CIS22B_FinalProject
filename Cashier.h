@@ -19,14 +19,14 @@ private:
 public:
 	//constructor here
 	Cashier(Inventory *);
-	Cashier(int, double, double);
+	//Cashier(int, double, double);
 
 	void displayTopMenu(); //to show first menu
 	void displayInternalMenu(int); //to show next menu for more interactions
 	void setQuantity(int);
 	void setTax(double);
 	void setTotal(Cart);
-	void deleteFromInv(Book);
+	void deleteFromInv();
 	int getQuantity();
 	double getTax();
 	double getTotal();
