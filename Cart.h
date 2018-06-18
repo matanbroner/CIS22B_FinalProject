@@ -17,9 +17,10 @@ public:
 	Cart(int); // constructor with custom cart size
 	~Cart(); // remember to delete items in shoppingCart
 
-
-	void addToCart(Book *); // should this take an Item object, or should this just be the UI part of add/removing? 
+	void addToCart(Book *); 
 	void removeFromCart(Book *);
+
+	Book ** getCartInv();
 
 	double getCartValue();
 };

@@ -2,11 +2,11 @@
 #include "Cart.h"
 
 Cart::Cart() {
-	*shoppingCart = new Book[10]; // default size 10?
+	shoppingCart = new Book*[10]; // default size 10?
 }
 
 Cart::Cart(int size) {
-	*shoppingCart = new Book[size];
+	shoppingCart = new Book*[size];
 	cartSize = size;
 }
 
@@ -31,6 +31,10 @@ void Cart::addToCart(Book *book) {
 	// First: Check if the book is in shoppingCart
 	// If yes, increment (item + item)
 	Book *currBook = nullptr;
+
+	// add the value to the cart first
+	calcCartVal(book->getRetail(), book->getStock());
+
 	for (int i = 0; i < cartSize; i++) {
 		currBook = shoppingCart[i];
 
@@ -82,6 +86,8 @@ void Cart::removeFromCart(Book *book) {
 				uniqueInCart--;
 			}
 
+			calcCartVal(book->getRetail(), book->getStock() * -1);
+
 			delete book;
 			book = nullptr;
 			return;
@@ -102,6 +108,9 @@ double Cart::getCartValue() {
 	return cartValue;
 }
 
+Book ** Cart::getCartInv() {
+	return shoppingCart;
+}
 
 // rather than scan the entire Book array, use this to update value as items are added
 void Cart::calcCartVal(double price, int quantity) {
@@ -109,8 +118,8 @@ void Cart::calcCartVal(double price, int quantity) {
 }
 
 void Cart::increaseCartSize() {
-	Book** biggerCart;
-	*biggerCart = new Book[cartSize * 2];
+	Book ** biggerCart;
+	biggerCart = new Book*[cartSize * 2];
 
 	// copy pointers from shoppingCart, set shoppingCart pointers to nullptr so when delete Cart is called the books arent deleted
 	for (int i = 0; i < cartSize; i++) {
