@@ -5,9 +5,26 @@
 #include "Cashier.h"
 
 // constructor
-Cashier::Cashier()
+Cashier::Cashier(Inventory *inventory)
 {
-	std::cout << "Cashier module constructor ..." << std::endl;
+	char viewInv;
+	std::cout << "Selected the Cashier Module" << std::endl << std::endl;
+
+	std::cout << "In this module you can select books to add to your shopping cart for purchase."
+		<< std::endl;
+	std::cout << "Once you have all the desired books in your cart you can proceed to checkout."
+		<< std::endl << std::endl;
+
+	//allow user to browse inventory
+	std::cout << "Would  you like to view the inventory? (Y/N): " << std::endl;
+	std::cin >> viewInv;
+
+	std::cout << std::endl;
+	if (viewInv == 'Y' || viewInv == 'y')
+	{
+		std::cout << std::endl << "Viewing inventory ..." << std::endl;
+		inventory->viewInventory();
+	}
 }
 
 Cashier::Cashier(int quantity, double tax, double total)
@@ -18,91 +35,63 @@ Cashier::Cashier(int quantity, double tax, double total)
 }
 
 //user can add books to shopping cart then check out
-void Cashier::displayTopMenu(Inventory inventory)
+void Cashier::displayTopMenu()
 {
-	char viewInv;
-	string title;
+	string title; // for testing
 
-	//read booklist from file
-	//create instance of shopping cart object
-	std::cout << "Selected the Cashier Module" << std::endl << std::endl;
+				  //read booklist from file
+				  //create instance of shopping cart object
 
-	std::cout << "In this module you can select books to add to your shopping cart for purchase." 
-		<< std::endl;
-	std::cout << "Once you have all the desired books in your cart you can proceed to checkout."
-		<< std::endl << std::endl;
-
-	//allow user to browse inventory
-	std::cout << "Would  you like to view the inventory? (Y/N): " << std::endl;
-	std::cin >> viewInv;
-	if (viewInv == 'Y' || viewInv == 'y')
-	{
-		inventory.viewInventory();
-	}
-
-	int choice = -1; //choice will read invalid so user can select from menu below
-
+	int choice = -1;
 	std::cout << "Please select an option below ..." << std::endl;
-	std::cout << "1. Add books to your shopping cart" << std::endl;
-	std::cout << "2. Remove books from your shopping cart" << std::endl;
-	std::cout << "3. View items in your shopping cart" << std::endl;
-	std::cout << "4. Proceed to checkout" << std::endl;
-	std::cout << "0. Go back to main menu" << std::endl << std::endl;
-	std::cout << "Enter your choice: ";
-	cin >> choice;
+	std::cout << "[1] Add books to your shopping cart" << std::endl;
+	std::cout << "[2] Remove books from your shopping cart" << std::endl;
+	std::cout << "[3] View items in your shopping cart" << std::endl;
+	std::cout << "[4] Proceed to checkout" << std::endl;
+	std::cout << "[0] Go back to main menu" << std::endl << std::endl;
+	std::cout << "Choice: ";
+	std::cin >> choice;
 
-	return choice;
+	while (choice < 0 || choice > 4)
+	{
+		std::cout << "Select a valid choice from the menu ..." << std::endl;
+		std::cin >> choice;
+	}
+	displayInternalMenu(choice);
 }
-
-//end displayTopMenu -- send to displayInternalMenu
-void Cashier::displayInternalMenu()
+void Cashier::displayInternalMenu(int choice)
 {
-	displayTopMenu();
-	char input = 'y'; //to start while loops
-	while (choice != 1 || choice != 2 || choice != 3 || choice != 4 || choice != 0)
+	string title; //for testing
+	cin.ignore();
+	switch (choice)
 	{
-		std::cout << "Please select to add to your cart or proceed to checkout." << std::endl;
-		cin >> choice;
-	}
-	if (choice == 1) //add items to users shopping cart
-	{
-		while (input = 'Y' || input = 'y')
-		{
-			std::cout << "Enter the title of the book you would like to add: ";
-			std::cin >> title;
-			std::cout << "Enter the quantity of " << title << " you'd like to add: ";
-			std::cin >> quantity;
-			std::cout << std::endl << std::endl;
-			std::cout << "Do you have more books to add? (Y/N): ";
-			std::cin >> input;
-		}
-		//function to add the book + quantity of it to shopping cart
-		std::cout << "Adding book(s) and quantity to shopping cart ..." << std::endl;
-	}
-	else if (choice == 2) //remove item from users shopping cart
-	{
-		while (input = 'Y' || input = 'y')
-		{
-			std::cout << "Enter the title of the book you would like to remove: ";
-			std::cin >> title;
-			std::cout << "Enter the quantity of " << title << " you'd like to remove: ";
-			std::cin >> quantity;
-			std::cout << std::endl << std::endl;
-			std::cout << "Do you have more books to remove? (Y/N): ";
-			std::cin >> input;
-		}
-		//function to remove the book + quantity of it to shopping cart
-		std::cout << "Removing book(s) and quantity to shopping cart ..." << std::endl;
-	}
-	else if (choice == 3) //let user view their shopping cart
-	{
+	case 1:
+		std::cout << "Enter the title of the book you would like to add: ";
+		getline(cin, title);
+		std::cout << "Enter the quantity of " << title << " you'd like to add: ";
+		std::cin >> quantity;
+		displayTopMenu();
+		break;
+	case 2:
+		std::cout << "Enter the title of the book you would like to remove: ";
+		std::cin >> title;
+		std::cout << "Enter the quantity of " << title << " you'd like to remove: ";
+		std::cin >> quantity;
+		displayTopMenu();
+		break;
+	case 3:
 		std::cout << "Here is your shopping cart ..." << std::endl;
-	}
-	else if (choice == 4) //take user to checkout with their shopping
+		displayTopMenu();
+		break;
+	case 4:
 		checkout();
-	else //if choice == 0, return to main menu?
-	{
+		break;
+	case 0:
 		std::cout << "Returning to main menu ..." << std::endl;
+		break;
+	default:
+		std::cout << "Select a valid choice ... " << std::endl;
+		displayTopMenu();
 	}
 }
 void Cashier::setQuantity(int quantity)
@@ -112,6 +101,7 @@ void Cashier::setQuantity(int quantity)
 void Cashier::setTax(double tax)
 {
 	this->tax = tax;
+	//this will be a constant?
 }
 void Cashier::setTotal(Cart cart)
 {
@@ -121,7 +111,7 @@ void Cashier::setTotal(Cart cart)
 void Cashier::deleteFromInv(Book b)
 {
 	string title = b.getTitle();
-	Inventory.deleteBook(title);
+	inventory.deleteBook(title);
 }
 void Cashier::viewCart(Cart cart)
 {
@@ -130,25 +120,31 @@ void Cashier::viewCart(Cart cart)
 void Cashier::checkout()
 {
 	//use the getBookInfo from inventory to find the books we're grabbing
-	Inventory.getBookInfo();
+	//inventory.getBookInfo();
+
 	//remove whatever books they purchase from inventory
-	deleteFromInv(inventory, book);
+	deleteFromInv(book);
 	printReceipt();
 }
-int Cashier::getQuantity(){ return quantity; }
+int Cashier::getQuantity() { return quantity; }
 double Cashier::getTax() { return tax; }
 double Cashier::getTotal() { return total; }
 
 void Cashier::printReceipt()
 {
 	//once the other stuff is corrected fully this shouldn't be hard to update..
-	std::cout << "\t\t Copy of receipt" << std::endl << std::endl;
-	std::cout << "Book 1  \t\t" << book.getRetail() << std::endl;
-	std::cout << "Book 2  \t\t" << book.getRetail() << std::endl << std::endl;
-	std::cout << "Subtotal\t\t" << shoppingCart.getCartValue() << endl;
+	std::cout << setw(46) << "Copy of receipt" << std::endl << std::endl;
+
+	std::cout << setw(20) << "Book 1" << setw(40) << /*book.getRetail()*/ "10.99" << std::endl;
+	std::cout << setw(20) << "Book 2" << setw(40) << /*book.getRetail()*/ "9.99" << std::endl << std::endl;
+	std::cout << setw(22) << "Subtotal" << setw(38) << /*shoppingCart.getCartValue()*/ "20.98" << endl;
 	std::cout << std::endl;
-	std::cout << "Tax     \t\t" << getTax() << std::endl << std::endl;
-	std::cout << "Total   \t\t" << getTotal() << std::endl;
+	std::cout << setw(17) << "Tax" << setw(43) << /*getTax() */ "5.00" << std::endl << std::endl;
+	std::cout << setw(19) << "Total" << setw(41) << /*getTotal()*/ "25.95" << std::endl;
 	std::cout << std::endl << std::endl;
-	std::cout << "\t\tThanks for shopping at Serendipity Book Store, please come again!" << std::endl;
+	std::cout << "\tThanks for shopping at Serendipity Book Store, please come again!" << std::endl;
+
+	//end program?
+	std::cout << std::endl << std::endl;
+	std::cout << "Returning to main menu ..." << std::endl;
 }
