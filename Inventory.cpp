@@ -516,11 +516,6 @@ int Inventory::getBookCount()
     return this->bookCount;
 }
 
-Book* Inventory::getBookfromIndex(int index)
-{
-    return books[index];
-}
-
 Inventory::~Inventory()
 {
     cout << "Saving your inventory file..." << endl;
