@@ -13,14 +13,6 @@ Report::Report(Inventory* object)
 	sortArr = new int[invptr->booksPossible];
 }
 
-Report::Report(Module* object)
-{
-	//invptr = object[3];
-	modptr = object;
-	//object->bookCount;		// no idea how to get tihs goin
-	//invptr = object;		// 
-}
-
 Report::~Report()
 {
 	delete[] sortArr;
@@ -38,15 +30,15 @@ int Report::getUserInput()
 			std::cin.clear();	// clear error flag
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');	// remove any extra characters if user typed more than one
 			errorNonInt = true;	// used to avoid throwing multiple errors
-			throw "Input is invalid. Please try again with an integer value.\n\n";
+			throw string ("Input is invalid. Please try again with an integer value.\n\n");
 			input = -1;
 		}
 
 		if (input > 6 || input < 0 && errorNonInt == false) {	// catch input out of range -- change 6 to max number of options
-			throw "invalid number input out of range.\n";
+			throw string ("invalid number input out of range.\n");
 			input = -1;
 		}
-	} catch (char *msg) {		//interpret exception from char string passed
+	} catch (string msg) {		//interpret exception from char string passed
 		std::cout << "Error: " << msg << std::endl;
 		errorNonInt = false;	// reset now that we've dealt with the error
 	}
@@ -61,24 +53,27 @@ void Report::displayInternalMenu(int input)
 	}
 
 	switch (input) {
-	case 1:						// choose a default sort type (prefer author?)
-		sortByQuantity();		// Inventory List
-		reportList();
+	case 1:
+		reportList();			// default sort is unsorted
 		break;
 	case 2:
 		sortByWholesaleValue();	// Inventory Wholesale Value
+		reverseSort();
 		reportWholeSaleValue();
 		break;
 	case 3:
 		sortByRetailValue();	// Inventory Retail Value
+		reverseSort();
 		reportRetailValue();
 		break;
 	case 4:
 		sortByQuantity();		// List by Quantity
+		reverseSort();
 		reportList();
 		break;
 	case 5:
 		sortByWholesaleValue();	// List by Cost
+		reverseSort();
 		reportWholesale();
 		break;
 	case 6:
@@ -92,6 +87,7 @@ int Report::displayTopMenu()
 {
 	int input;
 	do {
+		std::cout << std::endl;
 		std::cout << "Welcome to the ReportModule Menu!" << std::endl;
 		std::cout << "What would you like to view today?" << std::endl;
 		std::cout << "[1] Inventory List\n"
@@ -113,17 +109,12 @@ int Report::displayTopMenu()
 template<typename TYPE>
 void Report::sort(TYPE **arr)
 {
-	std::cout << "book count";
-	std::cout << invptr->bookCount << std::endl;
-	std::cout << "before" << std::endl;
-	for (int i = 0; i < invptr->bookCount; i++) {
-		std::cout << sortArr[i] << std::endl;
-	}
+	const int count = invptr->bookCount - 1;
 
 	int i, j, low;
-	for (i = 0; i < invptr->bookCount; i++) {
+	for (i = 0; i < count; i++) {
 		low = i;
-		for (j = i + 1; j < invptr->bookCount; j++) {
+		for (j = i + 1; j < count; j++) {
 			if (*arr[j] < *arr[low]) { low = j; }
 		}
 		TYPE *temp = arr[low];
@@ -134,19 +125,57 @@ void Report::sort(TYPE **arr)
 		sortArr[low] = sortArr[i];
 		sortArr[i] = tempi;
 	}
+}
 
-	std::cout << "after" << std::endl;
-	for (int i = 0; i < invptr->bookCount; i++) {
-		std::cout << sortArr[i] << std::endl;
+void Report::reverseSort()
+{
+	const int arraylength = invptr->bookCount - 1;
+	for (int i = 0; i < (arraylength / 2); i++) {
+		int temp = sortArr[i];
+		sortArr[i] = sortArr[(arraylength - 1) - i];
+		sortArr[(arraylength - 1) - i] = temp;
 	}
-	std::cout << "book count";
-	std::cout << invptr->bookCount << std::endl;
 }
 
 void Report::reportList() // quantity
 {
 	// inventory output
-	invptr->viewInventory();
+	int pages = 0;
+	if (invptr->bookCount % 10 == 0) // book count is divisible by 10
+		pages = invptr->bookCount / 10;
+	else pages = (invptr->bookCount / 10) + 1; // add extra page for remainder
+
+	std::cout << "There are " << pages << " pages in your Inventory." << endl;
+	std::cout << "View Page: ";
+	std::cin >> pages;
+
+	std::cout << "Page " << pages << endl;
+	std::cout << "---------------------------------------------------------------------" << endl;
+	std::cout << left << setw(27) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(15) << "Stock" << endl;
+	std::cout << "---------------------------------------------------------------------" << endl;
+
+	if (10 * pages > invptr->bookCount) // bookc count is not divisible by 10 and user chose last page
+	{
+		int diff = invptr->bookCount - (10 * (pages - 1));
+		for (int i = invptr->bookCount - diff; i < invptr->bookCount; i++)
+		{
+			std::cout << left << setw(25) <<invptr->books[sortArr[i]]->getTitle() << "   ";
+			std::cout << setw(15) <<invptr->books[sortArr[i]]->getAuthor() << "   ";
+			std::cout << setw(15) <<invptr->books[sortArr[i]]->getPub() << "   ";
+			std::cout << invptr->books[sortArr[i]]->getStock() << endl;
+		}
+	}
+
+	else // normal page display if user chose any page before last
+	{
+		for (int i = 10; i >= 1; i--)
+		{
+			std::cout << left << setw(25) << invptr->books[sortArr[(10 * pages) - i]]->getTitle() << "   ";
+			std::cout << setw(15) << invptr->books[sortArr[(10 * pages) - i]]->getAuthor() << "   ";
+			std::cout << setw(15) << invptr->books[sortArr[(10 * pages) - i]]->getPub() << "   ";
+			std::cout << invptr->books[sortArr[(10 * pages) - i]]->getStock() << endl;
+		}
+	}
 }
 
 void Report::reportAge()
@@ -156,16 +185,16 @@ void Report::reportAge()
 		pages = invptr->bookCount / 10;
 	else pages = (invptr->bookCount / 10) + 1; // add extra page for remainder
 
-	cout << "There are " << pages << " in your Inventory." << std::endl;
+	cout << "There are " << pages << " pages in your Inventory." << std::endl;
 	cout << "View Page: ";
 	cin >> pages;
 
 	cout << setw(30) << "Page " << pages << std::endl;
 	cout << "----------------------------------------------------------------" << std::endl;
-	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(5) << "Date Added" << setw(5) << "Stock" << std::endl;
+	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(15) << "Date Added" << setw(15) << "Stock" << std::endl;
 	cout << "----------------------------------------------------------------" << std::endl;
 
-	if (10 * pages > invptr->bookCount) // bookc count is not divisible by 10 and user chose last page
+	if (10 * pages > invptr->bookCount) // book count is not divisible by 10 and user chose last page
 	{
 		int diff = invptr->bookCount - (10 * (pages - 1));
 		for (int i = invptr->bookCount - diff; i < invptr->bookCount; i++)
@@ -199,13 +228,13 @@ void Report::reportWholesale()
 		pages = invptr->bookCount / 10;
 	else pages = (invptr->bookCount / 10) + 1; // add extra page for remainder
 
-	cout << "There are " << pages << " in your Inventory." << std::endl;
+	cout << "There are " << pages << " pages in your Inventory." << std::endl;
 	cout << "View Page: ";
 	cin >> pages;
 
 	cout << setw(30) << "Page " << pages << std::endl;
 	cout << "----------------------------------------------------------------" << std::endl;
-	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(5) << "Cost" << setw(5) << "Stock" << std::endl;
+	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(15) << "Cost" << setw(5) << "Stock" << std::endl;
 	cout << "----------------------------------------------------------------" << std::endl;
 
 	if (10 * pages > invptr->bookCount) // book count is not divisible by 10 and user chose last page
@@ -216,7 +245,6 @@ void Report::reportWholesale()
 			cout << setw(25) << left << invptr->books[sortArr[i]]->getTitle() << "   ";
 			cout << setw(15) << invptr->books[sortArr[i]]->getAuthor() << "   ";
 			cout << setw(15) << invptr->books[sortArr[i]]->getPub() << "   ";
-			//cout << setw(15) << invptr->books[sortArr[i]]->getCost() << "   ";
 			cout << setw(15) << invptr->books[sortArr[i]]->getWholesale() << "   ";
 			cout << invptr->books[sortArr[i]]->getStock() << std::endl;
 		}
@@ -238,7 +266,8 @@ void Report::reportWholesale()
 void Report::reportRetailValue() // entire retail + retail
 {
 	double total = totalRetailValue();
-	std::cout << "The total Retail Value of the inventory is: " << total << ".\n";
+	std::cout << std::endl;
+	std::cout << setprecision(2) << fixed << "The total Retail Value of the inventory is: $" << total << ".\n";
 
 	// inventory output
 	int pages = 0;
@@ -246,7 +275,7 @@ void Report::reportRetailValue() // entire retail + retail
 		pages = invptr->bookCount / 10;
 	else pages = (invptr->bookCount / 10) + 1; // add extra page for remainder
 
-	cout << "There are " << pages << " in your Inventory." << std::endl;
+	cout << "There are " << pages << " pages in your Inventory." << std::endl;
 	cout << "View Page: ";
 	cin >> pages;
 
@@ -263,7 +292,6 @@ void Report::reportRetailValue() // entire retail + retail
 			cout << setw(25) << left << invptr->books[sortArr[i]]->getTitle() << "   ";
 			cout << setw(15) << invptr->books[sortArr[i]]->getAuthor() << "   ";
 			cout << setw(15) << invptr->books[sortArr[i]]->getPub() << "   ";
-			//cout << setw(15) << invptr->books[sortArr[i]]->getPrice() << "   ";
 			cout << setw(15) << invptr->books[sortArr[i]]->getRetail() << "   ";
 			cout << invptr->books[sortArr[i]]->getStock() << std::endl;
 		}
@@ -285,39 +313,33 @@ void Report::reportRetailValue() // entire retail + retail
 void Report::reportWholeSaleValue() // entire wholesale + wholesale
 {
 	double total = totalWholesaleValue();
-	std::cout << "The total Wholesale Value of the inventory is: " << total << ".\n";
+	std::cout << std::endl;
+	std::cout << setprecision(2) << fixed << "The total Wholesale Value of the inventory is: $" << total << ".\n";
 	// inventory output
-	//reportWholesale();
-	//for (int i = 0; i < invptr->bookCount; i++) {
-	//	std::cout << sortArr[i] << std::endl;
-	//}
+	reportWholesale();
 }
 
 //	age is yyyyymmdd:	20180103	20180130
 void Report::sortByAge()
 {
-	//const int count = invptr->bookCount;
-	//int* ageArr[count];
-	//Book** ageBooks = new Book*[invptr->bookCount];
+	const int count = invptr->bookCount - 1;
 
-	int** ageArr = new int*[invptr->bookCount];
-	for (int i = 0; i < invptr->bookCount; i++) {
+	int** ageArr = new int*[count];
+	for (int i = 0; i < count; i++) {
 		ageArr[i] = new int;
-		*ageArr[i] = stoi(invptr->books[sortArr[i]]->getDate());
-		//*ageArr[i] = invptr->books[i]->getDate();
+		std::string temp = invptr->books[sortArr[i]]->getDate();
+		*ageArr[i] = std::stoi(temp);
 	}
 
 	sort(ageArr);
 	
-	//reportAge(&ageArr);
-	for (int i = 0; i < invptr->bookCount; i++)
+	for (int i = 0; i < count; i++)
 		delete ageArr[i];
 	delete[] ageArr;
 }
 
 void Report::sortByQuantity()
 {
-	//int* quantityArr[invptr->bookCount];
 	int** quantityArr = new int*[invptr->bookCount];
 
 	for (int i = 0; i < invptr->bookCount; i++) {
@@ -333,7 +355,6 @@ void Report::sortByQuantity()
 
 void Report::sortByRetailValue()
 {
-	//int* retailArr[invptr->bookCount];
 	double** retailArr = new double*[invptr->bookCount];
 
 	for (int i = 0; i < invptr->bookCount; i++) {
@@ -351,7 +372,6 @@ void Report::sortByWholesaleValue()
 {
 	int tempint = invptr->bookCount;
 
-	//int* wholesaleArr[invptr->bookCount];
 	double** wholesaleArr = new double*[invptr->bookCount];
 
 	for (int i = 0; i < invptr->bookCount; i++) {
