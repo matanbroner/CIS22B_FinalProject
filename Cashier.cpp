@@ -5,9 +5,10 @@
 #include "Cashier.h"
 
 // constructor
-Cashier::Cashier(Inventory *inventory)
+Cashier::Cashier(/*Inventory *inventory*/Module *module)
 {
 	char viewInv;
+
 	std::cout << "Selected the Cashier Module" << std::endl << std::endl;
 
 	std::cout << "In this module you can select books to add to your shopping cart for purchase."
@@ -26,15 +27,8 @@ Cashier::Cashier(Inventory *inventory)
 		inventory->viewInventory();
 	}
 }
-
-//Cashier::Cashier(int quantity, double tax, double total)
-//{
-//	this->quantity = quantity;
-//	this->tax = tax;
-//	this->total = total;
-//}
-
 //prompt user to select an option, pass to internal menu
+//this needs to return type int so we can go back to the base module
 void Cashier::displayTopMenu()
 {
 	int choice = -1;
@@ -42,7 +36,7 @@ void Cashier::displayTopMenu()
 	std::cout << "[1] Add books to your shopping cart" << std::endl;
 	std::cout << "[2] Remove books from your shopping cart" << std::endl;
 	std::cout << "[3] View items in your shopping cart" << std::endl;
-	std::cout << "[4] Proceed to checkout" << std::endl;
+	std::cout << "[4] Proceed to checkout" << std::endl << std::endl;
 	std::cout << "[0] Go back to main menu" << std::endl << std::endl;
 	std::cout << "Choice: ";
 	std::cin >> choice;
@@ -56,31 +50,35 @@ void Cashier::displayTopMenu()
 }
 void Cashier::displayInternalMenu(int choice)
 {
-	//Book *currentBook = nullptr;
-	string title = book.getTitle();
-	cin.ignore();
+	Book *currentBook = nullptr; //objects deleted in cart, so no need here
+	currentBook = new Book;
+	int index = 0;
+	currentBook = inventory->getBookByIndex(index);
+
+	//save the pointer to old book object from getIndex
+	//then copy information over to new book, pass new book
 	switch (choice)
 	{
 	case 1:
-		std::cout << "Enter the title of the book you would like to add: ";
-		getline(cin, title);
-		std::cout << "Enter the quantity of " << title << " you'd like to add: ";
+		std::cout << "Enter the index of the book from the inventory that you would like to add: ";
+		std::cin >> index;
+		std::cout << "Enter the quantity of that book you'd like to add: ";
 		std::cin >> quantity;
-		//shoppingCart.addToCart(currentBook);
-		//shoppingCart.getCartValue();
+		shoppingCart.addToCart(currentBook);
 		displayTopMenu();
 		break;
 	case 2:
-		std::cout << "Enter the title of the book you would like to remove: ";
-		std::cin >> title;
-		std::cout << "Enter the quantity of " << title << " you'd like to remove: ";
+		std::cout << "Enter the index of the book from the inventory that you would like to remove: ";
+		std::cin >> index;
+		std::cout << "Enter the quantity of that book you'd like to remove: ";
 		std::cin >> quantity;
-		//shoppingCart.removeFromCart(currentBook);
+		shoppingCart.removeFromCart(currentBook);
 		displayTopMenu();
 		break;
 	case 3:
 		std::cout << "Here is your shopping cart ..." << std::endl;
-		//viewCart(shoppingCart);
+		currentBook = *shoppingCart.getCartInv();
+		std::cout << currentBook;
 		displayTopMenu();
 		break;
 	case 4:
@@ -93,7 +91,6 @@ void Cashier::displayInternalMenu(int choice)
 		std::cout << "Select a valid choice ... " << std::endl;
 		displayTopMenu();
 	}
-	//delete currentBook;
 }
 void Cashier::setQuantity(int quantity)
 {
@@ -101,31 +98,35 @@ void Cashier::setQuantity(int quantity)
 }
 void Cashier::setTax(double tax)
 {
+	tax = total * .065; //CA sales tax is 6.5%
 	this->tax = tax;
-	//this will be a constant?
 }
-void Cashier::setTotal()
-{
-	double total = shoppingCart.getCartValue() + tax;
-	//get retail price of each book with tax, add all books cost
+void Cashier::setTotal(double total)
+{//get retail price of each book with tax, add all books cost
+	this->total = total;
+	total = shoppingCart.getCartValue() + tax;
 }
 void Cashier::deleteFromInv()
 {
 	string title = book.getTitle();
 	inventory->deleteBook(title);
 }
-void Cashier::viewCart()
-{
-	//function to show shopping cart?
-}
 void Cashier::checkout()
 {
-	//use the getBookInfo from inventory to find the books we're grabbing
-	inventory->getBookInfo(book.getTitle());
+	string title = book.getTitle();
+	//use the findBookIndex from inventory to find the books we're grabbing
+	inventory->findBookIndex(title);
 
 	//remove whatever books they purchase from inventory
-	deleteFromInv();
+	while (inventory->isInStock(title))
+	{
+		if (book.getStock() == 1)
+			deleteFromInv();
+		else if (book.getStock() > 1)
+			book.operator--(quantity);
+	}
 	printReceipt();
+	//delete the cart in case they want to keep shopping
 }
 int Cashier::getQuantity() { return quantity; }
 double Cashier::getTax() { return tax; }
@@ -136,12 +137,12 @@ void Cashier::printReceipt()
 	//once the other stuff is corrected fully this shouldn't be hard to update..
 	std::cout << setw(46) << "Copy of receipt" << std::endl << std::endl;
 
-	std::cout << setw(29) << "Book title here" << setw(31) << /*book.getRetail()*/ "10.99" << std::endl;
-	std::cout << setw(29) << "Book title here" << setw(31) << /*book.getRetail()*/ "9.99" << std::endl << std::endl;
-	std::cout << setw(22) << "Subtotal" << setw(38) << /*shoppingCart.getCartValue()*/ "20.98" << endl;
+	std::cout << setw(29) << "Book title here" << setw(31) << book.getRetail() << std::endl;
+	std::cout << setw(29) << "Book title here" << setw(31) << book.getRetail() << std::endl << std::endl;
+	std::cout << setw(22) << "Subtotal" << setw(38) << shoppingCart.getCartValue() << endl;
 	std::cout << std::endl;
-	std::cout << setw(17) << "Tax" << setw(43) << /*getTax() */ "5.00" << std::endl << std::endl;
-	std::cout << setw(19) << "Total" << setw(41) << /*getTotal()*/ "25.95" << std::endl;
+	std::cout << setw(17) << "Tax" << setw(43) << getTax() << std::endl << std::endl;
+	std::cout << setw(19) << "Total" << setw(41) << getTotal() << std::endl;
 	std::cout << std::endl << std::endl;
 	std::cout << "\tThanks for shopping at Serendipity Book Store, please come again!" << std::endl;
 
