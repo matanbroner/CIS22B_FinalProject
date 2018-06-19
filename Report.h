@@ -12,7 +12,7 @@ potentially some menu work
 /*
 Author: Timo Bitterli
 File: Report.h
-Last edit: 6/13/2018
+Last edit: 6/18/2018
 Class Report to display to user user specified total and or user specified type of sort sorted inventory 
 */
 
@@ -29,25 +29,22 @@ class Report :
 {
 private:
 //	template <typename sorts>* arrayOfPointers[Inventory::bookCount];	// this probably wont be usable
-	
+	Module* modptr;
 	Inventory* invptr;
+	int* sortArr;
 
-	// ask about making the Inventory::bookCount int public
 public:
 	//Report();						// no default constructor, needs inventory
-	Report(Inventory&);				// books are private in inventory (contains array of book objects)
+	Report(Inventory*);				// books are private in inventory (contains array of book objects)
+	Report(Module*);
 	~Report();
 
 	int getUserInput();
-	void processUserInput(int);		// if plain report, default sort by Author (if made), else Quantity
-
-	void moduleMenu();
+	void displayInternalMenu(int);	// if plain report, default sort by Author (if made), else Quantity
+	void displayTopMenu();
 
 	template<typename TYPE>
-	void sort(TYPE**);
-									// need to put friend class Report in private of Inventory to allow this template sort
-									// this would allow: (access too books array)
-									// invptr->books[low] = invptr->books[counter];
+	void sort(TYPE**);				// sorts list if type is compatible with < operator
 
 	void reportList();				// output inventory list as is (to be called after a sort)
 	void reportAge();				// Inventory::viewInventory with Age
@@ -56,13 +53,11 @@ public:
 	void reportRetailValue();		// reportlist() modified with int totalRetailValue();
 	void reportWholeSaleValue();	// reportWholesale() modified with int totalWholesaleValue();
 
-	void sortByAge();				// char[8]
-	// void sortByAuthor();			// string
+	void sortByAge();				// string
 	void sortByQuantity();			// int
 	void sortByRetailValue();		// double
 	void sortByWholesaleValue();	// double
 
-	// int totalQuantity();			// int ( inventory::bookCount )
 	double totalRetailValue();		// double
 	double totalWholesaleValue();	// double
 };
