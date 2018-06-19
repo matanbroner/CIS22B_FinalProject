@@ -28,7 +28,6 @@ void reportList();
 List by Quantity			A list of all books in the inventory sorted by quantity on hand.
 The books with the greatest quantity on hand will be listed first.
 
-
 void sortByWholesaleValue();
 void reportWholesale()
 List by Cost			A list of all books in the inventory, sorted by wholesale cost.The

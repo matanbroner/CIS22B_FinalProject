@@ -7,6 +7,6 @@ class Module {
 public:
 	Module();
 	~Module();
-	int displayTopMenu();
-	int displayInternalMenu(int);
+	virtual int displayTopMenu();
+	virtual void displayInternalMenu(/*int*/);
 };

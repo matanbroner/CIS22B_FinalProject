@@ -49,7 +49,7 @@ int Report::getUserInput()
 void Report::displayInternalMenu(int input)
 {
 	for (int i = 0; i < invptr->bookCount; i++) {
-		sortArr[i] = i;
+		sortArr[i] = i;			// reset the sort index before calling a new sort
 	}
 
 	switch (input) {
@@ -57,27 +57,27 @@ void Report::displayInternalMenu(int input)
 		reportList();			// default sort is unsorted
 		break;
 	case 2:
-		sortByWholesaleValue();	// Inventory Wholesale Value
+		sortByWholesaleValue();	// Inventory Wholesale Value	High->Low
 		reverseSort();
 		reportWholeSaleValue();
 		break;
 	case 3:
-		sortByRetailValue();	// Inventory Retail Value
+		sortByRetailValue();	// Inventory Retail Value		High->Low
 		reverseSort();
 		reportRetailValue();
 		break;
 	case 4:
-		sortByQuantity();		// List by Quantity
+		sortByQuantity();		// List by Quantity				High->Low
 		reverseSort();
 		reportList();
 		break;
 	case 5:
-		sortByWholesaleValue();	// List by Cost
+		sortByWholesaleValue();	// List by Cost					High->Low
 		reverseSort();
 		reportWholesale();
 		break;
 	case 6:
-		sortByAge();			// List by Age	
+		sortByAge();			// List by Age					Old->Young (Low->High)
 		reportAge();
 		break;
 	}
@@ -88,27 +88,30 @@ int Report::displayTopMenu()
 	int input;
 	do {
 		std::cout << std::endl;
-		std::cout << "Welcome to the ReportModule Menu!" << std::endl;
-		std::cout << "What would you like to view today?" << std::endl;
-		std::cout << "[1] Inventory List\n"
-			<< "[2] Inventory Wholesale Value\n"
-			<< "[3] Inventory Retail Value\n"
-			<< "[4] List by Quantity\n"
-			<< "[5] List by Cost\n"
-			<< "[6] List by Age\n"
-			<< "[0] Exit Menu\n"
-			<< "[?] ";
+		std::cout << "-- Reports --" << std::endl;
+		std::cout << "[1] -- Inventory List\n"
+			<< "[2] -- Inventory Wholesale Value\n"
+			<< "[3] -- Inventory Retail Value\n"
+			<< "[4] -- List by Quantity\n"
+			<< "[5] -- List by Cost\n"
+			<< "[6] -- List by Age\n"
+			<< "[0] -- Exit Menu\n\n"
+			<< "Option: ";
 		input = getUserInput();
 
 		if (input != -1)
 			displayInternalMenu(input);
 	} while (input != 0);	// only exit menu on input == 0
+	std::cout << std::endl;
 	return NULL;
 }
 
 template<typename TYPE>
 void Report::sort(TYPE **arr)
 {
+	// simple selection sort
+	// sorts an array of pointers of TYPE to satisfy template usage as well as only use one sort function
+	// sorts an index array at the same time for referencing actual book locations for output to user
 	const int count = invptr->bookCount - 1;
 
 	int i, j, low;
@@ -129,6 +132,7 @@ void Report::sort(TYPE **arr)
 
 void Report::reverseSort()
 {
+	// reverses the index if an output requires sorted by High->Low instead of Low->High
 	const int arraylength = invptr->bookCount - 1;
 	for (int i = 0; i < (arraylength / 2); i++) {
 		int temp = sortArr[i];
@@ -137,7 +141,7 @@ void Report::reverseSort()
 	}
 }
 
-void Report::reportList() // quantity
+void Report::reportList() // default unsorted
 {
 	// inventory output
 	int pages = 0;
@@ -154,7 +158,7 @@ void Report::reportList() // quantity
 	std::cout << left << setw(27) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(15) << "Stock" << endl;
 	std::cout << "---------------------------------------------------------------------" << endl;
 
-	if (10 * pages > invptr->bookCount) // bookc count is not divisible by 10 and user chose last page
+	if (10 * pages > invptr->bookCount) // book count is not divisible by 10 and user chose last page
 	{
 		int diff = invptr->bookCount - (10 * (pages - 1));
 		for (int i = invptr->bookCount - diff; i < invptr->bookCount; i++)
@@ -180,6 +184,7 @@ void Report::reportList() // quantity
 
 void Report::reportAge()
 {
+	// inventory output
 	int pages = 0;
 	if (invptr->bookCount % 10 == 0) // book count is divisible by 10
 		pages = invptr->bookCount / 10;
@@ -263,7 +268,7 @@ void Report::reportWholesale()
 	}
 }
 
-void Report::reportRetailValue() // entire retail + retail
+void Report::reportRetailValue() // entire retail + retailTotal
 {
 	double total = totalRetailValue();
 	std::cout << std::endl;
@@ -310,7 +315,7 @@ void Report::reportRetailValue() // entire retail + retail
 	}
 }
 
-void Report::reportWholeSaleValue() // entire wholesale + wholesale
+void Report::reportWholeSaleValue() // entire wholesale + wholesaleTotal
 {
 	double total = totalWholesaleValue();
 	std::cout << std::endl;
@@ -319,20 +324,20 @@ void Report::reportWholeSaleValue() // entire wholesale + wholesale
 	reportWholesale();
 }
 
-//	age is yyyyymmdd:	20180103	20180130
+//	age is yyyyymmdd:	20180103	20171206
 void Report::sortByAge()
 {
 	const int count = invptr->bookCount - 1;
 
+	// age of book is of type string
+	// must be converted to int for sorting
 	int** ageArr = new int*[count];
 	for (int i = 0; i < count; i++) {
 		ageArr[i] = new int;
-		std::string temp = invptr->books[sortArr[i]]->getDate();
-		*ageArr[i] = std::stoi(temp);
+		*ageArr[i] = std::stoi(invptr->books[sortArr[i]]->getDate());
 	}
 
 	sort(ageArr);
-	
 	for (int i = 0; i < count; i++)
 		delete ageArr[i];
 	delete[] ageArr;
@@ -340,6 +345,7 @@ void Report::sortByAge()
 
 void Report::sortByQuantity()
 {
+	// quantity of book is of type int
 	int** quantityArr = new int*[invptr->bookCount];
 
 	for (int i = 0; i < invptr->bookCount; i++) {
@@ -355,6 +361,7 @@ void Report::sortByQuantity()
 
 void Report::sortByRetailValue()
 {
+	// retail value of book is of type double
 	double** retailArr = new double*[invptr->bookCount];
 
 	for (int i = 0; i < invptr->bookCount; i++) {
@@ -370,8 +377,7 @@ void Report::sortByRetailValue()
 
 void Report::sortByWholesaleValue()
 {
-	int tempint = invptr->bookCount;
-
+	// wholesale value of book is of type double
 	double** wholesaleArr = new double*[invptr->bookCount];
 
 	for (int i = 0; i < invptr->bookCount; i++) {
@@ -387,6 +393,7 @@ void Report::sortByWholesaleValue()
 
 double Report::totalRetailValue()
 {
+	// retail value of book is of type double
 	double total=0.00;
 
 	for (int i = 0; i < invptr->bookCount; i++) {
@@ -398,6 +405,7 @@ double Report::totalRetailValue()
 
 double Report::totalWholesaleValue()
 {
+	// wholesale value of book is of type double
 	double total = 0.00;
 
 	for (int i = 0; i < invptr->bookCount; i++) {
