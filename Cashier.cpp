@@ -33,8 +33,7 @@ int Cashier::displayTopMenu()
 	std::cout << "[1] -- Add books to your shopping cart" << std::endl;
 	std::cout << "[2] -- Remove books from your shopping cart" << std::endl;
 	std::cout << "[3] -- View items in your shopping cart" << std::endl;
-	std::cout << "[4] -- Proceed to checkout" << std::endl << std::endl;
-	std::cout << std::endl << std::endl;
+	std::cout << "[4] -- Proceed to checkout" << std::endl << std::endl << std::endl;
 	std::cout << "[0] -- Go back to main menu" << std::endl << std::endl;
 	std::cout << "Option: ";
 	std::cin >> choice;
@@ -44,6 +43,7 @@ int Cashier::displayTopMenu()
 		std::cout << "Select a valid choice from the menu ..." << std::endl;
 		std::cout << "Option: ";
 		std::cin >> choice;
+		std::cout << std::endl;
 	}
 	displayInternalMenu(choice);
 	return NULL;
@@ -54,6 +54,7 @@ int Cashier::displayInternalMenu(int choice)
 	//then copy information over to new book, pass new book
 	Book *currentBook = nullptr; //objects deleted in cart, so no need here
 	currentBook = new Book;
+	//Book *currentBook = new Book;
 	int index = 0;
 
 	switch (choice)
@@ -61,16 +62,17 @@ int Cashier::displayInternalMenu(int choice)
 	case 1:
 		//shoppingCart.increaseCartSize();
 		std::cout << "Enter the index of the book that you would like to add: ";
-		std::cin >> index;
+		std::cin >> index; //index = 0 for ISBN 000001
 		currentBook->setTitle(inventory->getBookByIndex(index)->getTitle());
 		std::cout << "Enter the quantity of that book you'd like to add: ";
 		std::cin >> quantity;
 		currentBook->setStock(quantity);
+		currentBook->setRT(inventory->getBookByIndex(index)->getRetail());
 		shoppingCart.addToCart(currentBook);
 		displayTopMenu();
 		break;
 	case 2:
-		std::cout << "Enter the index of the book from the inventory that you would like to remove: ";
+		std::cout << "Enter the index of the book that you would like to remove: ";
 		std::cin >> index;
 		currentBook->setTitle(inventory->getBookByIndex(index)->getTitle());
 		std::cout << "Enter the quantity of that book you'd like to remove: ";
@@ -80,8 +82,20 @@ int Cashier::displayInternalMenu(int choice)
 		displayTopMenu();
 		break;
 	case 3:
-		std::cout << "Here is your shopping cart ..." << std::endl;
-		shoppingCart.getCartInv();
+		std::cout << setw(45) << "-- Shopping Cart --" << std::endl;
+		Book ** displayCart;
+		displayCart = new Book*[10];
+		displayCart = shoppingCart.getCartInv();
+		for (int i = 0; i < shoppingCart.uniqueInCart; i++)
+		{
+			std::cout << setw(15) <<  "Title: " << setw(45) << displayCart[i]->getTitle() << std::endl;
+			std::cout << setprecision(2) << fixed << setw(15) << "Price: " 
+				<< setw(40) << "$" << displayCart[i]->getRetail() << std::endl;
+			std::cout << setw(18) << "Quantity: " << setw(42) << displayCart[i]->getStock()
+				<< std::endl;
+			std::cout << std::endl;
+		}
+		//delete[] displayCart;
 		displayTopMenu();
 		break;
 	case 4:
