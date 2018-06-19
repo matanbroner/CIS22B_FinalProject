@@ -12,30 +12,31 @@
 #include "Module.h"
 
 int main(int argc, const char * argv[]) {
-    
+    int choice = 0;
     Module *modules[4];
     modules[0] = new Module;
     modules[1] = new Inventory("/Users/matanbroner/Desktop/datafile.txt");
-    int choice = int(modules[0]->displayTopMenu());
-    switch (choice)
+    
+    do
     {
-        case 1:
-            break; // cashier
-        case 2:
-            modules[1]->displayTopMenu();
-            break;
-        case 3:
-            break; // reports
-        case 4:
-            exit(0);
-            break;
-        case 0:
-            modules[0]->displayTopMenu();
-            break;
-        default:
-            cout << "Not valid input..." << endl;
-            modules[0]->displayTopMenu();
+        choice = int(modules[0]->displayTopMenu());
+        switch (choice)
+        {
+            case 1:
+                break; // cashier
+            case 2:
+                modules[1]->displayTopMenu();
+                break;
+            case 3:
+                break; // reports
+            case 4:
+                cout << "Thank you for using Serendipity Bookstore's POS Service, Goodbye!" << endl;
+                break;
+            default:
+                cout << "Not valid input..." << endl;
+        }
     }
+    while (choice != 4);
     
     return 0;
 }
