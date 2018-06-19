@@ -7,7 +7,7 @@
 #include "Inventory.h"
 #include "Cart.h"
 
-class Cashier
+class Cashier : public Module
 {
 private:
 	int quantity;
@@ -18,20 +18,18 @@ private:
 	Cart shoppingCart;
 public:
 	//constructor here
-	Cashier(Inventory *);
-	//Cashier(int, double, double);
+	Cashier(/*Inventory **/Module *);
 
 	void displayTopMenu(); //to show first menu
 	void displayInternalMenu(int); //to show next menu for more interactions
 	void setQuantity(int);
 	void setTax(double);
-	void setTotal();
+	void setTotal(double);
 	void deleteFromInv();
 	int getQuantity();
 	double getTax();
 	double getTotal();
 
-	void viewCart();
 	void checkout();
 	void printReceipt();
 };
