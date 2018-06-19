@@ -41,7 +41,7 @@ public:
 
 	int getUserInput();
 	void displayInternalMenu(int);	// if plain report, default sort by Author (if made), else Quantity
-	void displayTopMenu();
+	int displayTopMenu();
 
 	template<typename TYPE>
 	void sort(TYPE**);				// sorts list if type is compatible with < operator

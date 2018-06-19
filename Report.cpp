@@ -10,18 +10,20 @@ Class Report implementation
 Report::Report(Inventory* object)
 {
 	invptr = object;
+	sortArr = new int[invptr->booksPossible];
 }
 
 Report::Report(Module* object)
 {
 	//invptr = object[3];
 	modptr = object;
-	object->bookCount;		// no idea how to get tihs goin
-	invptr = object;		// 
+	//object->bookCount;		// no idea how to get tihs goin
+	//invptr = object;		// 
 }
 
 Report::~Report()
 {
+	delete[] sortArr;
 }
 
 int Report::getUserInput()
@@ -54,9 +56,9 @@ int Report::getUserInput()
 
 void Report::displayInternalMenu(int input)
 {
-	sortArr = new int[invptr->bookCount];
-	for (int i = 0; i < invptr->bookCount; i++)
-		sortArr[i] = i; 
+	for (int i = 0; i < invptr->bookCount; i++) {
+		sortArr[i] = i;
+	}
 
 	switch (input) {
 	case 1:						// choose a default sort type (prefer author?)
@@ -84,10 +86,9 @@ void Report::displayInternalMenu(int input)
 		reportAge();
 		break;
 	}
-	delete[] sortArr;
 }
 
-void Report::displayTopMenu()
+int Report::displayTopMenu()
 {
 	int input;
 	do {
@@ -106,25 +107,40 @@ void Report::displayTopMenu()
 		if (input != -1)
 			displayInternalMenu(input);
 	} while (input != 0);	// only exit menu on input == 0
+	return NULL;
 }
 
 template<typename TYPE>
 void Report::sort(TYPE **arr)
 {
-	int i, j, low;
-	for (i = 0; i < 5; i++) {
-	low = i;
-	for (j = i + 1; j < 5; j++) {
-	if (*arr[j] < *arr[low]) { low = j; }
+	std::cout << "book count";
+	std::cout << invptr->bookCount << std::endl;
+	std::cout << "before" << std::endl;
+	for (int i = 0; i < invptr->bookCount; i++) {
+		std::cout << sortArr[i] << std::endl;
 	}
-	TYPE *temp = arr[low];
-	arr[low] = arr[i];
-	arr[i] = temp;
 
-	int tempi = sortArr[i];
-	sortArr[low] = sortArr[i];
-	sortArr[i] = tempi;
+	int i, j, low;
+	for (i = 0; i < invptr->bookCount; i++) {
+		low = i;
+		for (j = i + 1; j < invptr->bookCount; j++) {
+			if (*arr[j] < *arr[low]) { low = j; }
+		}
+		TYPE *temp = arr[low];
+		arr[low] = arr[i];
+		arr[i] = temp;
+
+		int tempi = sortArr[low];
+		sortArr[low] = sortArr[i];
+		sortArr[i] = tempi;
 	}
+
+	std::cout << "after" << std::endl;
+	for (int i = 0; i < invptr->bookCount; i++) {
+		std::cout << sortArr[i] << std::endl;
+	}
+	std::cout << "book count";
+	std::cout << invptr->bookCount << std::endl;
 }
 
 void Report::reportList() // quantity
@@ -236,7 +252,7 @@ void Report::reportRetailValue() // entire retail + retail
 
 	cout << setw(30) << "Page " << pages << std::endl;
 	cout << "----------------------------------------------------------------" << std::endl;
-	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(5) << "Price" << setw(5) << "Stock" << std::endl;
+	cout << left << setw(25) << "Title" << setw(20) << "Author" << setw(15) << "Publisher" << setw(15) << "Price" << setw(5) << "Stock" << std::endl;
 	cout << "----------------------------------------------------------------" << std::endl;
 
 	if (10 * pages > invptr->bookCount) // book count is not divisible by 10 and user chose last page
@@ -271,7 +287,10 @@ void Report::reportWholeSaleValue() // entire wholesale + wholesale
 	double total = totalWholesaleValue();
 	std::cout << "The total Wholesale Value of the inventory is: " << total << ".\n";
 	// inventory output
-	reportWholesale();
+	//reportWholesale();
+	//for (int i = 0; i < invptr->bookCount; i++) {
+	//	std::cout << sortArr[i] << std::endl;
+	//}
 }
 
 //	age is yyyyymmdd:	20180103	20180130
@@ -282,9 +301,11 @@ void Report::sortByAge()
 	//Book** ageBooks = new Book*[invptr->bookCount];
 
 	int** ageArr = new int*[invptr->bookCount];
-	for (int i = 0; i < invptr->bookCount; i++)
+	for (int i = 0; i < invptr->bookCount; i++) {
+		ageArr[i] = new int;
 		*ageArr[i] = stoi(invptr->books[sortArr[i]]->getDate());
 		//*ageArr[i] = invptr->books[i]->getDate();
+	}
 
 	sort(ageArr);
 	
@@ -299,8 +320,10 @@ void Report::sortByQuantity()
 	//int* quantityArr[invptr->bookCount];
 	int** quantityArr = new int*[invptr->bookCount];
 
-	for (int i = 0; i < invptr->bookCount; i++)
+	for (int i = 0; i < invptr->bookCount; i++) {
+		quantityArr[i] = new int;
 		*quantityArr[i] = invptr->books[sortArr[i]]->getStock();
+	}
 
 	sort(quantityArr);
 	for (int i = 0; i < invptr->bookCount; i++)
@@ -313,8 +336,10 @@ void Report::sortByRetailValue()
 	//int* retailArr[invptr->bookCount];
 	double** retailArr = new double*[invptr->bookCount];
 
-	for (int i = 0; i < invptr->bookCount; i++)
+	for (int i = 0; i < invptr->bookCount; i++) {
+		retailArr[i] = new double;
 		*retailArr[i] = invptr->books[sortArr[i]]->getRetail();
+	}
 
 	sort(retailArr);
 	for (int i = 0; i < invptr->bookCount; i++)
@@ -329,8 +354,10 @@ void Report::sortByWholesaleValue()
 	//int* wholesaleArr[invptr->bookCount];
 	double** wholesaleArr = new double*[invptr->bookCount];
 
-	for (int i = 0; i < invptr->bookCount; i++)
+	for (int i = 0; i < invptr->bookCount; i++) {
+		wholesaleArr[i] = new double;
 		*wholesaleArr[i] = invptr->books[sortArr[i]]->getWholesale();
+	}
 
 	sort(wholesaleArr);
 	for (int i = 0; i < invptr->bookCount; i++)
