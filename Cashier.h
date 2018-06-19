@@ -18,10 +18,10 @@ private:
 	Cart shoppingCart;
 public:
 	//constructor here
-	Cashier(/*Inventory **/Module *);
-
-	void displayTopMenu(); //to show first menu
-	void displayInternalMenu(int); //to show next menu for more interactions
+	Cashier(Module *);
+	//Cashier(Inventory *);
+	int displayTopMenu(); //to show first menu
+	int displayInternalMenu(int); //to show next menu cart/checkout interactions
 	void setQuantity(int);
 	void setTax(double);
 	void setTotal(double);

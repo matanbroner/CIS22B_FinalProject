@@ -5,40 +5,39 @@
 #include "Cashier.h"
 
 // constructor
-Cashier::Cashier(/*Inventory *inventory*/Module *module)
+Cashier::Cashier(Module *module)
 {
-	char viewInv;
-
-	std::cout << "Selected the Cashier Module" << std::endl << std::endl;
-
-	std::cout << "In this module you can select books to add to your shopping cart for purchase."
-		<< std::endl;
-	std::cout << "Once you have all the desired books in your cart you can proceed to checkout."
-		<< std::endl << std::endl;
-
-	//allow user to browse inventory
-	std::cout << "Would  you like to view the inventory? (Y/N): " << std::endl;
-	std::cin >> viewInv;
-
-	std::cout << std::endl;
-	if (viewInv == 'Y' || viewInv == 'y')
-	{
-		std::cout << std::endl << "Viewing inventory ..." << std::endl;
-		inventory->viewInventory();
-	}
 }
+//Cashier::Cashier(Inventory *inventory)
+//{
+//PROBABLY DON'T NEED VIEW INVENTORY HERE SINCE THEY CAN NAVIGATE 
+//THE MENU EASILY BACK AND FORTH, RIGHT?
+//HAVING ISSUES WITH IT OPENING SO IGNORING FOR NOW
+
+//	//allow user to browse inventory
+//	std::cout << "Would  you like to view the inventory? (Y/N): " << std::endl;
+//	std::cin >> viewInv;
+//
+//	std::cout << std::endl;
+//	if (viewInv == 'Y' || viewInv == 'y')
+//	{
+//		std::cout << std::endl << "Viewing inventory ..." << std::endl;
+//		inventory->viewInventory();
+//	}
+//}
 //prompt user to select an option, pass to internal menu
 //this needs to return type int so we can go back to the base module
-void Cashier::displayTopMenu()
+int Cashier::displayTopMenu()
 {
 	int choice = -1;
-	std::cout << "Please select an option below ..." << std::endl;
-	std::cout << "[1] Add books to your shopping cart" << std::endl;
-	std::cout << "[2] Remove books from your shopping cart" << std::endl;
-	std::cout << "[3] View items in your shopping cart" << std::endl;
-	std::cout << "[4] Proceed to checkout" << std::endl << std::endl;
-	std::cout << "[0] Go back to main menu" << std::endl << std::endl;
-	std::cout << "Choice: ";
+	std::cout << setw(20) << "-- Cashier --" << std::endl;
+	std::cout << "[1] -- Add books to your shopping cart" << std::endl;
+	std::cout << "[2] -- Remove books from your shopping cart" << std::endl;
+	std::cout << "[3] -- View items in your shopping cart" << std::endl;
+	std::cout << "[4] -- Proceed to checkout" << std::endl << std::endl;
+	std::cout << std::endl << std::endl;
+	std::cout << "[0] -- Go back to main menu" << std::endl << std::endl;
+	std::cout << "Option: ";
 	std::cin >> choice;
 
 	while (choice < 0 || choice > 4)
@@ -47,14 +46,13 @@ void Cashier::displayTopMenu()
 		std::cin >> choice;
 	}
 	displayInternalMenu(choice);
+	return NULL;
 }
-void Cashier::displayInternalMenu(int choice)
+int Cashier::displayInternalMenu(int choice)
 {
 	Book *currentBook = nullptr; //objects deleted in cart, so no need here
 	currentBook = new Book;
 	int index = 0;
-	currentBook = inventory->getBookByIndex(index);
-
 	//save the pointer to old book object from getIndex
 	//then copy information over to new book, pass new book
 	switch (choice)
@@ -62,23 +60,27 @@ void Cashier::displayInternalMenu(int choice)
 	case 1:
 		std::cout << "Enter the index of the book from the inventory that you would like to add: ";
 		std::cin >> index;
+		currentBook->setTitle(inventory->getBookByIndex(index)->getTitle());
 		std::cout << "Enter the quantity of that book you'd like to add: ";
 		std::cin >> quantity;
+		currentBook->setStock(quantity);
 		shoppingCart.addToCart(currentBook);
 		displayTopMenu();
 		break;
 	case 2:
 		std::cout << "Enter the index of the book from the inventory that you would like to remove: ";
 		std::cin >> index;
+		currentBook->setTitle(inventory->getBookByIndex(index)->getTitle());
 		std::cout << "Enter the quantity of that book you'd like to remove: ";
 		std::cin >> quantity;
+		currentBook->setStock(quantity);
 		shoppingCart.removeFromCart(currentBook);
 		displayTopMenu();
 		break;
 	case 3:
 		std::cout << "Here is your shopping cart ..." << std::endl;
-		currentBook = *shoppingCart.getCartInv();
-		std::cout << currentBook;
+		//currentBook = *shoppingCart.getCartInv();
+		//std::cout << currentBook;
 		displayTopMenu();
 		break;
 	case 4:
@@ -91,6 +93,7 @@ void Cashier::displayInternalMenu(int choice)
 		std::cout << "Select a valid choice ... " << std::endl;
 		displayTopMenu();
 	}
+	return NULL;
 }
 void Cashier::setQuantity(int quantity)
 {
