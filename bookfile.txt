@@ -1,0 +1,25 @@
+000001	Harry Potter	JK Rowling	Scholastic	19990908	8	09.99	12.00
+000002	Outsider	Stephen King	Scribner	20180522	6	17.00	22.00
+000003	The Hobbit	JRR Tolkien	Random House	19860728	6	10.00	14.00
+000004	Shelter in Place	Nora Roberts	SM Press	20180529	1	16.50	20.00
+000005	Turbulence	Stuart Woods	Penguin	20180605	7	20.95	25.00
+000006	A Song of Ice and Fire	George Martin	Random House	20131029	5	09.05	13.50
+000007	The Da Vinci Code	Dan Brown	Knopf Doubleday	20060328	3	11.25	14.00
+000008	Life of Pi	Yann Martel	HMH	20030421	4	09.50	11.00
+000009	Don Quixote	Miguel Cerv	Barnes&Noble	20040501	2	09.60	10.50
+000010	A Tale of Two Cities	Charles Dickens	Barnes&Noble	20040725	5	07.25	10.00
+000011	The Great Gatsby	F Scott Fitz	Scribner	20040930	3	10.50	15.00
+000012	Chronicles of Narnia	CS Lewis	HarperCollins	20020305	1	07.50	10.50
+000013	Willy Wonka	Roald Dahl	Penguin Young	20070816	06.99	09.99
+000014	The Catcher in the Rye	JD Salinger	LBC	19910501	3	06.00	10.00
+000015	Lord of the Flies	William Golding	Penguin	19970228	4	11.80	16.50
+000016	Of Mice and Men	John Steinbeck	Penguin	19930928	7	08.99	12.00
+000017	Catch 22	Joseph Heller	Simon&Schuster	20110504	2	19.99	25.00
+000018	Tom Sawyer	Mark Twain	Barnes&Noble	20160805	9	10.00	13.00
+000019	Farenheit 451	Ray Bradbury	Simon&Schuster	20120110	4	09.89	13.50
+000020	Charlotte's Web	EB White	HarperCollins	20120410	8	08.00	11.00
+000021	Fifty Shades of Grey	EL James	Knopf Doubleday	20120403	3	11.20	18.25
+000022	Oh, the Places You'll Go!	Dr Seuss	Random House	19900128	2	12.15	16.00
+000023	The Giving Tree	ShelSilverstein	HarperCollins	20140218	1	12.40	15.00
+000024	The Alchemist	Paulo Coelho	HarperCollins	20140415	3	10.50	14.00
+000025	Pride and Prejudice	Jane Austen	Barnes&Noble	20140514	9	08.75	12.50
