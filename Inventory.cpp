@@ -10,6 +10,7 @@
 Inventory::Inventory(string filename)
 {
     this->filename = filename;
+    cout << filename << endl;
     ifstream inputFile;
     inputFile.open(filename.c_str()); // pre-v.11 c++ requires c-string file name
     
@@ -81,13 +82,14 @@ void Inventory::displayInternalMenu(int choice)
             break;
         case 0:
             cout << "Returning to main menu..." << endl;
+            
             break;
         default:
             cout << "Something went wrong... " << endl;
     }
 }
 
-void Inventory::displayTopMenu()
+int Inventory::displayTopMenu()
 {
     int choice = -1;
     cout << endl << setw(20) << "-- Inventory --" << endl << endl;
@@ -110,6 +112,7 @@ void Inventory::displayTopMenu()
         cin >> choice;
     }
     displayInternalMenu(choice);
+    return choice;
 }
 
 void Inventory::sortInventory()
@@ -475,21 +478,6 @@ ifstream& operator>>(ifstream &inputStream, Book* b)
     return inputStream;
 }
 
-void Inventory::printToFile()
-{
-    ofstream outputFile;
-    outputFile.open(filename);
-    for (int i = 0; i < bookCount; i++)
-    {
-        outputFile << books[i]->getISBN() << '\t';
-        outputFile << books[i]->getTitle() << '\t';
-        outputFile << books[i]->getPub() << '\t';
-        outputFile << books[i]->getDate() << '\t';
-        outputFile << books[i]->getStock() << '\t';
-        outputFile << books[i]->getRetail() << '\t';
-        outputFile << books[i]->getWholesale() << '\n';
-    }
-}
 
 ostream& operator<<(ostream& strm, Book* x)
 {
@@ -505,12 +493,6 @@ ostream& operator<<(ostream& strm, Book* x)
     return strm;
 }
 
-Book* Inventory::getBookByIndex(int index)
-{
-    return books[index];
-}
-
-
 void Inventory::clearBuffer()
 {
     cin.clear();
@@ -519,13 +501,18 @@ void Inventory::clearBuffer()
 
 int Inventory::getBookCount()
 {
-    return this->bookCount;
+    return bookCount;
+}
+
+Book* Inventory::getBookByIndex(int index)
+{
+    return books[index];
 }
 
 Inventory::~Inventory()
 {
     cout << "Saving your inventory file..." << endl;
-    printToFile();
+   // printToFile();
     bookCount--; // Move availible book index down by 1
     while (bookCount >= 0)
     {
