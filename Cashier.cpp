@@ -1,128 +1,182 @@
-//
-// Cashier.cpp
-//
+#include <string>
+#include "Cart.h"
 
-#include "Cashier.h"
-
-// constructor
-Cashier::Cashier(/*Inventory *inventory*/Inventory *invptr)
-{
-	inventory = invptr;
-}
-//prompt user to select an option, pass to internal menu
-//this needs to return type int so we can go back to the base module
-int Cashier::displayTopMenu()
-{
-	int choice = -1;
-	while (choice != 0)
-	{
-		std::cout << "Please select an option below ..." << std::endl;
-		std::cout << "[1] Add books to your shopping cart" << std::endl;
-		std::cout << "[2] Remove books from your shopping cart" << std::endl;
-		std::cout << "[3] View items in your shopping cart" << std::endl;
-		std::cout << "[4] Proceed to checkout" << std::endl << std::endl;
-		std::cout << "[5] View Inventory" << std::endl << std::endl;
-		std::cout << "[0] Go back to main menu" << std::endl << std::endl;
-		std::cout << "Choice: ";
-		std::cin >> choice;
-		displayInternalMenu(choice);
-	}
-	return choice;
-}
-void Cashier::displayInternalMenu(int choice)
-{
-	Book *currentBook = nullptr; //objects deleted in cart, so no need here
-	currentBook = new Book;
-	string title = "";
-	int index = 0;
-	//save the pointer to old book object from getIndex
-	//then copy information over to new book, pass new book
-	switch (choice)
-	{
-	case 1:
-		inventory->clearBuffer();
-		std::cout << "Enter the title of the book that you would like to add: ";
-		std::getline(cin, title);
-		index = inventory->findBookIndex(title);
-		if (index != -1) {
-			currentBook = inventory->getBookByIndex(index);
-			std::cout << "Enter the quantity of that book you would like to add: ";
-			std::cin >> quantity;
-			shoppingCart.addToCart(currentBook, quantity);
-		}
-		else cout << "Could not find book in inventory" << endl;
-		break;
-	case 2:
-		inventory->clearBuffer();
-		std::cout << "Enter the title of the book that you would like to remove: ";
-		std::getline(cin, title);
-		index = inventory->findBookIndex(title);
-		currentBook = inventory->getBookByIndex(index);
-		std::cout << "Enter the quantity of that book you would like to remove: ";
-		std::cin >> quantity;
-		shoppingCart.removeFromCart(currentBook, quantity);
-		break;
-	case 3:
-		cout << shoppingCart;
-		break;
-	case 4:
-		checkout();
-		break;
-	case 5:
-		inventory->viewInventory();
-		break;
-	case 0:
-		std::cout << "Returning to main menu ..." << std::endl;
-		break;
-	default:
-		std::cout << "Select a valid choice ... " << std::endl;
-	}
+Cart::Cart() {
 }
 
-void Cashier::setTax()
+Cart::~Cart()
 {
-	tax = shoppingCart.getCartValue() * .065; //CA sales tax is 6.5%
-}
-void Cashier::setTotal()
-{//get retail price of each book with tax, add all books cost
-	total = shoppingCart.getCartValue();
-}
-void Cashier::checkout()
-{
-	setTotal();
-	setTax();
-	for (int i = 0; i < shoppingCart.getNumItems(); i++)
-	{
-		if (shoppingCart.getCartInv()[i]->getStock() == 0)
-			inventory->deleteBook(shoppingCart.getCartInv()[i]->getTitle());
-		inventory->sortInventory();
-	}
-	printReceipt();
-	//delete the cart in case they want to keep shopping
 }
 
-double Cashier::getTax() { return tax; }
-double Cashier::getTotal() { return total; }
+void Cart::addToCart(Book *book, int quantity) {
+    
+    // check if book is in shoppingCart already
+    // if it is in cart, increment (item + item)
+    // if it isn't, add to the end of the array
+    // if shopping cart is too small, double array size
+    
+    
+    // First: Check if the book is in shoppingCart
+    // If yes, increment (item + item)
+    Book *currBook = nullptr;
+    // add the value to the cart first
+    calcCartVal(book->getRetail(), quantity);
+    
+    for (int i = 0; i < uniqueInCart; i++) {
+        currBook = shoppingCart[i];
+        
+        if (currBook == book && quantity < book->getStock() && quantity > 0)
+        {
+            quantities[i] += quantity;
+            cout << quantities[i];
+            book->setStock(book->getStock() - quantity);
+            return;
+        }
+        else if (currBook == book && quantity == book->getStock())
+        {
+            book->setStock(0);
+            quantities[i] += quantity;
+        }
+        else if (currBook == book && quantity > book->getStock())
+        {
+            if (book->getStock() == 0)
+                cout << "There are 0 copies of this book on the shelf at the moment..." << endl;
+            else
+            {
+            cout << "You are attempting to purchase more copies than are availible, adding all availible copies to your cart..." << endl;
+            quantities[i] +=  book->getStock();
+            book->setStock(0);
+            }
+        }
+        else if (currBook == book && quantity == 0)
+            cout << "Okay... purchasing an entire 0 books..." << endl;
+    }
+    
+    // If no, check cart space
+    if (uniqueInCart == 100) {
+        cout << "Cart capacity reached..." << endl;
+    }
+    else
+    {
+    // Then add book to the end of the array
+    shoppingCart[uniqueInCart] = book;
+    quantities[uniqueInCart] = 0;
+    if (quantity < book->getStock() && quantity > 0)
+        quantities[uniqueInCart] = quantity;
+    else if (quantity == book->getStock())
+    {
+        quantities[uniqueInCart] = quantity;
+        book->setStock(0);
+    }
+    else if (quantity > book->getStock())
+    {
+        cout << "You are attempting to purchase more copies than are availible, adding all availible copies to your cart..." << endl;
+        quantities[uniqueInCart] +=  book->getStock();
+        book->setStock(0);
+    }
+    else if (quantity == 0)
+        cout << "Okay... purchasing an entire 0 books..." << endl;
+    
+    uniqueInCart++;
+    }
+    
+    // UI, TO BE WRITTEN SOMEWHERE ELSE:
+    // display list of Items in Inventory by index + 1
+    // user inputs number to be added
+    // if quantity is more than 1, ask for quantity to be added
+    
+}
 
-void Cashier::printReceipt()
+void Cart::removeFromCart(Book *book, int quantity)
 {
-	//once the other stuff is corrected fully this shouldn't be hard to update..
-	std::cout << setw(50) << "--Copy of receipt--" << std::endl << std::endl;
+    bool found = false;
+    // check if book is in shoppingCart already
+    // if it is in cart, decrement (item - item)
+    // if it isn't, do nothing? Exception?
+    
+    Book *currBook = nullptr;
+    for (int i = 0; i < uniqueInCart; i++)
+    {
+        currBook = shoppingCart[i];
+        if (currBook == nullptr)
+            shiftCart(i);
+        if (currBook == book)
+        {
+            found = true;
+            if (quantity == quantities[i])
+            {
+                book->setStock(book->getStock() + quantities[i]);
+                shoppingCart[i] = nullptr;
+                quantities[i] = 0;
+            }
+            else if (quantity < quantities[i])
+            {
+                book->setStock(book->getStock() + quantity);
+                quantities[i] -= quantity;
+            }
+            else if (quantity > quantities[i])
+            {
+                cout << "You don't have that many copies... removing book from cart completely." << endl;
+                book->setStock(book->getStock() + quantities[i]);
+                quantities[i] = 0;
+                shoppingCart[i] = nullptr;
+            }
+            // shifts pointers in cart over
+            if (quantities[i] == 0)
+            {
+                shiftCart(i);
+            }
+        }
+            
+            calcCartVal(book->getRetail(), (quantities[i] * -1));
+            return;
+    }
+    if (found == false)
+        cout << "Book not found in your cart..." << endl;
+}
 
-	for (int i = 0; i < shoppingCart.getNumItems(); i++)
-	{
-		cout << setw(20) << shoppingCart.getCartInv()[i]->getTitle() << " : " << shoppingCart.getQuantityofItem(i)
-			<< setw(35) << setprecision(2) << fixed << "$" << shoppingCart.getCartInv()[i]->getRetail() * shoppingCart.getQuantityofItem(i) << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout << setprecision(2) << fixed << setw(22) << "Subtotal" << setw(37) << "$" << shoppingCart.getCartValue() << endl;
-	std::cout << std::endl;
-	std::cout << setprecision(2) << fixed << setw(17) << "Tax" << setw(42) << "$" << getTax() << std::endl << std::endl;
-	std::cout << setprecision(2) << fixed << setw(19) << "Total" << setw(40) << "$" << getTotal() + getTax() << std::endl;
-	std::cout << std::endl << std::endl;
-	//std::cout << "\tThanks for shopping at Serendipity Book Store, please come again!" << std::endl;
+    
+    // UI, TO BE WRITTEN SOMEWHERE ELSE:
+    // display list of Items in shoppingCart by index + 1
+    // user inputs number to be deleted
+    // if quantity is more than 1, ask for quantity to be deleted
+    //
 
-	//end program?
-	std::cout << std::endl << std::endl;
-	std::cout << "Returning to main menu ..." << std::endl;
+
+double Cart::getCartValue() {
+    return cartValue;
+}
+
+Book ** Cart::getCartInv() {
+    return shoppingCart;
+}
+
+// rather than scan the entire Book array, use this to update value as items are added
+void Cart::calcCartVal(double price, int quantity) {
+    cartValue += (price * quantity);
+}
+
+int Cart::getNumItems(){return uniqueInCart;}
+int Cart::getQuantityofItem(int i){return quantities[i];
+
+}
+ostream& operator<<(ostream& strm, Cart &c)
+{
+    strm << "     -- You Cart --     " << endl << endl;
+    for (int i = 0; i < c.uniqueInCart; i++)
+    {
+        strm << i+1 << ". " << c.shoppingCart[i]->getTitle() << ":    " << c.quantities[i] << endl;
+    }
+    return strm;
+}
+
+void Cart:: shiftCart(int i)
+{
+    for (int k = i; k < uniqueInCart - 1; k++)
+    {
+        quantities[k] = quantities[k+1];
+        shoppingCart[k] = shoppingCart[k + 1];
+        shoppingCart[k + 1] = nullptr;
+    }
+    uniqueInCart--;
 }
