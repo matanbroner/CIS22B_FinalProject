@@ -41,7 +41,6 @@ int Cashier::displayTopMenu()
 	while (choice < 0 || choice > 4)
 	{
 		std::cout << "Select a valid choice from the menu ..." << std::endl;
-		std::cout << "Option: ";
 		std::cin >> choice;
 		std::cout << std::endl;
 	}
@@ -52,9 +51,7 @@ int Cashier::displayInternalMenu(int choice)
 {
 	//save the pointer to old book object from getIndex
 	//then copy information over to new book, pass new book
-	Book *currentBook = nullptr; //objects deleted in cart, so no need here
-	currentBook = new Book;
-	//Book *currentBook = new Book;
+	Book *currentBook = new Book;
 	int index = 0;
 
 	switch (choice)
@@ -88,8 +85,8 @@ int Cashier::displayInternalMenu(int choice)
 		displayCart = shoppingCart.getCartInv();
 		for (int i = 0; i < shoppingCart.uniqueInCart; i++)
 		{
-			std::cout << setw(15) <<  "Title: " << setw(45) << displayCart[i]->getTitle() << std::endl;
-			std::cout << setprecision(2) << fixed << setw(15) << "Price: " 
+			std::cout << setw(15) << "Title: " << setw(45) << displayCart[i]->getTitle() << std::endl;
+			std::cout << setprecision(2) << fixed << setw(15) << "Price: "
 				<< setw(40) << "$" << displayCart[i]->getRetail() << std::endl;
 			std::cout << setw(18) << "Quantity: " << setw(42) << displayCart[i]->getStock()
 				<< std::endl;
