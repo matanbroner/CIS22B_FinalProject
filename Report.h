@@ -48,7 +48,6 @@ class Report :
 	public Module
 {
 private:
-	Module* modptr;
 	Inventory* invptr;
 	int* sortArr;
 
