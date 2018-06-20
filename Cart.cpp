@@ -2,6 +2,7 @@
 #include "Cart.h"
 
 Cart::Cart() {
+    uniqueInCart = 0;
 }
 
 Cart::~Cart()
@@ -103,7 +104,7 @@ void Cart::removeFromCart(Book *book, int quantity)
         if (currBook == book)
         {
             found = true;
-            if (quantity == quantities[i])
+            if (quantity == int(quantities[i]))
             {
                 book->setStock(book->getStock() + quantities[i]);
                 shoppingCart[i] = nullptr;
@@ -125,7 +126,6 @@ void Cart::removeFromCart(Book *book, int quantity)
             if (quantities[i] == 0)
             {
                 shiftCart(i);
-                uniqueInCart--;
             }
         }
             
@@ -180,4 +180,13 @@ void Cart:: shiftCart(int i)
         shoppingCart[k + 1] = nullptr;
     }
     uniqueInCart--;
+}
+
+void Cart::cleanCart()
+{
+    for (int i = 0; i < uniqueInCart-1; i++)
+    {
+        shoppingCart[i] = nullptr;
+    }
+    uniqueInCart = 0;
 }
