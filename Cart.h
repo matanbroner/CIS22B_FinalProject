@@ -8,8 +8,8 @@ class Cart {
 private:
     Book *shoppingCart[100]; // pointer that will go to an array
     int cartSize;
-    int uniqueInCart = 0; // number of unique items in cart - for array sizing
-    double cartValue; // total cost of the cart items
+    int uniqueInCart; // number of unique items in cart - for array sizing
+    double cartValue = 0; // total cost of the cart items
     int quantities[100];
     
     void calcCartVal(double, int); // calculates the new cart value given a price and quantity
@@ -28,6 +28,7 @@ public:
     int getNumItems();
     int getQuantityofItem(int);
     void shiftCart(int);
+    void cleanCart();
     
     friend ostream& operator<<(ostream&, Cart&);
 };
