@@ -44,11 +44,13 @@ void Cashier::displayInternalMenu(int choice)
             std::cout << "Enter the title of the book from the inventory that you would like to add: ";
             std::getline(cin, title);
             index = inventory->findBookIndex(title);
+            if (index != -1){
             currentBook = inventory->getBookByIndex(index);
             std::cout << "Enter the quantity of that book you'd like to add: ";
             std::cin >> quantity;
             shoppingCart.addToCart(currentBook, quantity);
-            inventory->clearBuffer();
+            }
+            else cout << "Could not find book in inventory" << endl;
             break;
         case 2:
             inventory->clearBuffer();
