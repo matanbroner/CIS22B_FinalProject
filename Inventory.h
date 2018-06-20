@@ -30,7 +30,6 @@ public:
     Inventory(string);
     void displayTopMenu();
     bool isInStock(string);
-    void printToFile();
     void addBook();
     void addBook(string);
     void deleteBook(string);

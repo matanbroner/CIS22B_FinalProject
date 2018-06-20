@@ -10,12 +10,16 @@
 #include "Inventory.h"
 #include "Inventory.h"
 #include "Module.h"
+#include "Cashier.h"
 
 int main(int argc, const char * argv[]) {
+    Inventory *invptr = new Inventory("/Users/matanbroner/Desktop/datafile.txt");
     int choice = 0;
     Module *modules[4];
     modules[0] = new Module;
-    modules[1] = new Inventory("/Users/matanbroner/Desktop/datafile.txt");
+    modules[1] = invptr;
+    modules[2] = new Cashier(invptr);
+    
     
     do
     {
@@ -23,6 +27,7 @@ int main(int argc, const char * argv[]) {
         switch (choice)
         {
             case 1:
+                modules[2]->displayTopMenu();
                 break; // cashier
             case 2:
                 modules[1]->displayTopMenu();
@@ -40,5 +45,6 @@ int main(int argc, const char * argv[]) {
     
     for (int i = 0; i < 4; i++)
         delete modules[i];
+    
     return 0;
 }
