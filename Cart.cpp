@@ -130,10 +130,10 @@ void Cart::removeFromCart(Book *book, int quantity)
         }
             
             calcCartVal(book->getRetail(), (quantities[i] * -1));
-            return;
     }
     if (found == false)
         cout << "Book not found in your cart..." << endl;
+    return;
 }
 
     
